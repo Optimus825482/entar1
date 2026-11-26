@@ -85,7 +85,7 @@
   }
   @media (max-width: 640px) {
     header.topbar { padding: 10px 12px; gap: 8px; flex-wrap: wrap; }
-    header.topbar .btn-ghost { padding: 7px 12px; font-size: 12px; }
+    header.topbar .back-event-btn { order: 3; width: 100%; justify-content: center; padding: 8px 12px; font-size: 12px; }
     .viewport-card { height: min(60vh, 440px); height: min(60dvh, 440px); min-height: 340px; }
     .cam-toolbar { top: 10px; left: 10px; right: 10px; gap: 5px; }
     .cam-btn { padding: 6px 9px; font-size: 11px; }
@@ -96,6 +96,13 @@
   }
   #tableSearch { width: min(100%, 175px) !important; flex: 1 1 140px; }
   @media (max-width: 420px) { .eticket-meta { grid-template-columns: 1fr !important; } }
+  .inspector-close { display: none; }
+  #mobileInspectorDialog .inspector-close { display: inline-flex; align-items: center; justify-content: center; }
+  #mobileInspectorDialog.modal { width: min(440px, 94vw); padding: 0; }
+  #mobileInspectorDialog .inspector { border: 0; border-radius: 0; width: 100%; }
+  .inspector-actions { display: grid; gap: 10px; }
+  dialog:modal { overscroll-behavior: contain; }
+  dialog::backdrop { overflow: hidden; overscroll-behavior: contain; }
   #canvas3d { width: 100%; height: 100%; display: block; cursor: grab; }
   #canvas3d:active { cursor: grabbing; }
 
@@ -178,7 +185,7 @@
     <img src="assets/merit-entertainment-logo.svg" alt="Merit Entertainment" style="height:46px; width:auto; display:block;">
   </a>
   <div class="event-pill" id="topEventPill"></div>
-  <a href="merit-bilet.html" class="btn btn-ghost" style="padding:8px 16px; font-size:12.5px;" data-i18n="salon_back">← Etkinlik Değiştir</a>
+  <a href="merit-bilet.html" class="btn btn-ghost back-event-btn" style="padding:8px 16px; font-size:12.5px;" data-i18n="salon_back">← Etkinlik Değiştir</a>
 </header>
 
 <main class="wrap">
@@ -226,13 +233,16 @@
       </div>
     </div>
 
-    <aside class="inspector" aria-label="Seçili masa özeti">
+    <aside class="inspector" id="inspectorCard" aria-label="Seçili masa özeti">
       <div class="inspector-head">
         <div>
           <h2 id="insTitle">Masa Seçin</h2>
           <div style="font-size:12.5px; color:var(--muted);" id="insSub">Müsait bir masa veya locaya tıklayın</div>
         </div>
-        <span class="type-pill" id="insType">Masa</span>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="type-pill" id="insType">Masa</span>
+          <button type="button" class="icon-close inspector-close" id="closeInsModal" aria-label="Kapat">×</button>
+        </div>
       </div>
 
       <div class="view-preview">
@@ -251,7 +261,10 @@
         <div class="summary-row"><span data-i18n="salon_total">Toplam Tutar</span><span class="summary-total" id="sumTotal">₺0</span></div>
       </div>
 
-      <button type="button" class="btn btn-primary" id="btnCheckout" disabled style="width:100%;" data-i18n="salon_checkout">Seç &amp; Ödemeye Geç →</button>
+      <div class="inspector-actions">
+        <button type="button" class="btn btn-ghost" id="btnSeatPovModal" style="width:100%; border-color:var(--gold); color:var(--gold-bright);" data-i18n="salon_pov">Masadan Sahneye Bak</button>
+        <button type="button" class="btn btn-primary" id="btnCheckout" disabled style="width:100%;" data-i18n="salon_checkout">Seç &amp; Ödemeye Geç →</button>
+      </div>
     </aside>
   </div>
 </main>
@@ -299,8 +312,11 @@
   </div>
 </footer>
 
+<!-- MOBİL MASA ÖZET DİYALOĞU -->
+<dialog class="modal" id="mobileInspectorDialog" closedby="any" aria-labelledby="insTitle"></dialog>
+
 <!-- ÖDEME & E-BİLET MODALI -->
-<dialog class="modal" id="checkoutModal" aria-labelledby="chkTitle">
+<dialog class="modal" id="checkoutModal" closedby="any" aria-labelledby="chkTitle">
   <div class="modal-head">
     <h3 id="chkTitle">Bilgiler &amp; Hızlı Ödeme</h3>
     <button type="button" class="icon-close" id="closeChk" aria-label="Kapat">×</button>
@@ -919,7 +935,10 @@ canvas.addEventListener('pointerdown', (e) => { downPt = [e.clientX, e.clientY];
 canvas.addEventListener('pointerup', (e) => {
   if (!downPt || Math.hypot(e.clientX - downPt[0], e.clientY - downPt[1]) >= 6) return;
   const u = getHit(e);
-  if (u && !u.soldOut && u.freeCount >= guestCount) selectUnit(u);
+  if (u && !u.soldOut && u.freeCount >= guestCount) {
+    selectUnit(u);
+    openMobileInspector();
+  }
 });
 
 // Per-table & per-loca sightline preview from pre-rendered assets/sightlines/*.webp
@@ -1005,9 +1024,46 @@ document.getElementById('btnSeatPov').addEventListener('click', () => {
   flyCamera([selectedUnit.x, selectedUnit.y + 2.0, selectedUnit.z], [0, 3.8, -24], 800);
 });
 
+// Mobile Table Inspector Dialog (<= 1060px)
+const arenaLayout = document.querySelector('.arena-layout');
+const inspectorCard = document.getElementById('inspectorCard');
+const mobileInspectorDialog = document.getElementById('mobileInspectorDialog');
+const isMobileLayout = () => window.matchMedia('(max-width: 1060px)').matches;
+
+function openMobileInspector() {
+  if (!isMobileLayout() || mobileInspectorDialog.open) return;
+  mobileInspectorDialog.appendChild(inspectorCard);
+  mobileInspectorDialog.showModal();
+}
+function restoreInspector() {
+  if (inspectorCard.parentElement !== arenaLayout) {
+    arenaLayout.appendChild(inspectorCard);
+  }
+}
+mobileInspectorDialog.addEventListener('close', restoreInspector);
+document.getElementById('closeInsModal').addEventListener('click', () => mobileInspectorDialog.close());
+document.getElementById('btnSeatPovModal').addEventListener('click', () => {
+  if (mobileInspectorDialog.open) mobileInspectorDialog.close();
+  document.getElementById('btnSeatPov').click();
+});
+
+// Fallback light-dismiss for Safari (no closedBy support)
+if (!('closedBy' in HTMLDialogElement.prototype)) {
+  [mobileInspectorDialog, document.getElementById('checkoutModal')].forEach(dlg => {
+    let pressedOutside = false;
+    const outside = (e) => {
+      const r = dlg.getBoundingClientRect();
+      return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+    };
+    dlg.addEventListener('pointerdown', (e) => { pressedOutside = outside(e); });
+    dlg.addEventListener('pointerup', (e) => { if (pressedOutside && outside(e)) dlg.close(); });
+  });
+}
+
 // Checkout Modal
 const modal = document.getElementById('checkoutModal');
 document.getElementById('btnCheckout').addEventListener('click', () => {
+  if (mobileInspectorDialog.open) mobileInspectorDialog.close();
   document.getElementById('step2').style.display = 'flex';
   document.getElementById('step3').style.display = 'none';
   document.getElementById('chkEv').textContent = `${activeEvent.artist} · ${activeEvent.date} · Saat ${activeEvent.time}`;
@@ -1072,6 +1128,7 @@ document.getElementById('tableSearch').addEventListener('change', (e) => {
   if (found && !found.soldOut) {
     selectUnit(found);
     flyCamera([found.x, found.y + 10, found.z + 11], [found.x, found.y + 0.5, found.z], 700);
+    openMobileInspector();
   }
 });
 
