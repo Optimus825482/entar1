@@ -83,7 +83,19 @@
     position: relative; background: #050609; border: 1px solid var(--line);
     border-radius: 20px; overflow: hidden; height: 650px;
   }
-  @media (max-width: 640px) { .viewport-card { height: 480px; } }
+  @media (max-width: 640px) {
+    header.topbar { padding: 10px 12px; gap: 8px; flex-wrap: wrap; }
+    header.topbar .btn-ghost { padding: 7px 12px; font-size: 12px; }
+    .viewport-card { height: min(60dvh, 440px); min-height: 340px; }
+    .cam-toolbar { top: 10px; left: 10px; right: 10px; gap: 5px; }
+    .cam-btn { padding: 6px 9px; font-size: 11px; }
+    .viewport-legend { left: 10px; right: 10px; bottom: 10px; padding: 7px 10px; font-size: 11px; }
+    .legend-items { flex-wrap: wrap; gap: 8px 12px; }
+    .inspector { padding: 15px; }
+    .view-preview-cap { flex-wrap: wrap; gap: 4px; }
+  }
+  #tableSearch { width: min(100%, 175px) !important; flex: 1 1 140px; }
+  @media (max-width: 420px) { .eticket-meta { grid-template-columns: 1fr !important; } }
   #canvas3d { width: 100%; height: 100%; display: block; cursor: grab; }
   #canvas3d:active { cursor: grabbing; }
 
@@ -108,7 +120,8 @@
   #hoverTip {
     position: absolute; pointer-events: none; z-index: 20;
     background: rgba(10, 12, 18, 0.94); border: 1px solid var(--gold);
-    border-radius: 10px; padding: 8px 12px; font-size: 12px; display: none; white-space: nowrap;
+    border-radius: 10px; padding: 8px 12px; font-size: 12px; display: none;
+    max-width: calc(100% - 24px); white-space: normal;
   }
 
   .inspector {
@@ -306,7 +319,7 @@
   </div>
   <div class="modal-body" id="step3" style="display:none;">
     <div class="eticket">
-      <div style="display:flex; justify-content:space-between; gap:12px;">
+      <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
         <div>
           <span style="font-size:11px; color:var(--ok); font-weight:700;">✓ ONAYLANDI · E-BİLET</span>
           <h4 style="margin:4px 0 2px; font-family:var(--serif); font-size:26px;" id="tkArtist"></h4>
@@ -314,7 +327,7 @@
         </div>
         <div class="qr-box" id="tkQr"></div>
       </div>
-      <div style="margin-top:12px; border-top:1px dashed var(--line); padding-top:10px; display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:13px;">
+      <div class="eticket-meta" style="margin-top:12px; border-top:1px dashed var(--line); padding-top:10px; display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:13px;">
         <div><span style="color:var(--muted)">Misafir:</span> <b id="tkGuest"></b></div>
         <div><span style="color:var(--muted)">PNR:</span> <b id="tkPnr" style="color:var(--gold-bright)"></b></div>
         <div><span style="color:var(--muted)">Konum:</span> <b id="tkSeat"></b></div>

@@ -102,7 +102,7 @@
   .reels-strip { padding: 60px 0 76px; }
   .strip-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 14px; margin-bottom: 26px; }
   .strip-head h2 { font-family: var(--serif); font-size: clamp(30px, 4vw, 44px); margin: 0; }
-  .reels-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+  .reels-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 18px; }
   .reel-card {
     position: relative; border-radius: 16px; overflow: hidden; aspect-ratio: 9 / 14;
     border: 1px solid var(--line-soft); background: #0b0d14;
@@ -139,6 +139,7 @@
   .icon-close { background: transparent; border: 1px solid var(--line-soft); color: var(--muted); width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font-size: 18px; }
   .modal-body { padding: 22px; display: flex; flex-direction: column; gap: 16px; }
   .guest-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  @media (max-width: 380px) { .guest-grid { grid-template-columns: repeat(2, 1fr); } }
   .guest-btn { padding: 12px 0; border-radius: 10px; border: 1px solid var(--line-soft); background: var(--bg-card); color: var(--ink); font-weight: 700; cursor: pointer; font-family: inherit; }
   .guest-btn[aria-pressed="true"] { background: var(--gold); color: #08090d; border-color: var(--gold); }
 </style>

@@ -47,6 +47,12 @@
   .map-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
   .map-head h2 { margin: 0; font-family: var(--serif); font-size: 28px; color: var(--gold-bright); }
   .map-frame { width: 100%; height: 320px; border: 1px solid var(--line-soft); border-radius: 14px; overflow: hidden; background: #0d1018; }
+  @media (max-width: 480px) {
+    .info-grid { grid-template-columns: 1fr; }
+    .countdown-grid { grid-template-columns: repeat(2, 1fr); }
+    .map-section { padding: 16px; }
+    .map-frame { height: 250px; }
+  }
   .map-frame iframe { width: 100%; height: 100%; border: 0; filter: grayscale(25%) invert(92%) contrast(94%) hue-rotate(180deg); }
   .guest-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 20px; }
   .guest-btn { padding: 9px 15px; border-radius: 10px; border: 1px solid var(--line-soft); background: var(--bg-card); color: var(--ink); font-weight: 700; cursor: pointer; font-family: inherit; }

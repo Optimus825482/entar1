@@ -541,17 +541,92 @@ export function mountLanguageSwitcher() {
     const st = document.createElement('style');
     st.id = 'i18n-style';
     st.textContent = `
+      body{overflow-wrap:break-word}
+      img,video,svg{max-inline-size:100%}
+      :where(h1,h2,h3){text-wrap:balance}
+      :where(p,li){text-wrap:pretty}
+      .wrap,.foot-wrap,.foot-grid>*,.arena-layout>*,.hero-grid>*,.detail-grid>*{min-inline-size:0}
+      header.topbar{
+        padding-top:max(12px,env(safe-area-inset-top,0px)) !important;
+        padding-inline:max(clamp(14px,3.5vw,36px),env(safe-area-inset-left,0px)) max(clamp(14px,3.5vw,36px),env(safe-area-inset-right,0px)) !important;
+      }
+      footer.site-footer{
+        padding-bottom:max(28px,env(safe-area-inset-bottom,0px)) !important;
+      }
       header.topbar .brand img{height:60px !important;width:auto}
-      @media(max-width:640px){header.topbar .brand img{height:48px !important}}
+      @media(max-width:640px){header.topbar .brand img{height:44px !important}}
+      .topbar-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+      .mob-nav-btn{display:none;align-items:center;justify-content:center;gap:6px;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.32);color:#f7f5f0;min-inline-size:44px;min-block-size:40px;padding:7px 11px;border-radius:999px;font:700 16px/1 var(--sans,sans-serif);cursor:pointer;anchor-name:--mob-nav-btn}
+      .mob-nav-btn:hover{border-color:#f0d068;background:rgba(212,175,55,0.16)}
+      .mob-nav-pop{position:fixed;inset:auto;inset-block-start:4.75rem;inset-block-start:anchor(--mob-nav-btn bottom);inset-inline-end:1rem;margin-block-start:0.5rem;inline-size:min(86dvw,20rem);max-inline-size:calc(100dvw - 2rem);max-block-size:calc(100dvh - 6rem);overflow:auto;background:#11131a;border:1px solid rgba(212,175,55,0.38);border-radius:16px;padding:10px;z-index:130;box-shadow:0 24px 60px rgba(0,0,0,0.88)}
+      .mob-nav-pop:not(:is(:popover-open,.\:popover-open)){display:none}
+      .mob-nav-pop:is(:popover-open,.\:popover-open){display:grid;gap:4px}
+      .mob-nav-pop a{display:flex;align-items:center;min-block-size:44px;padding:10px 14px;border-radius:10px;color:#f7f5f0;text-decoration:none;font:500 14px/1.25 var(--sans,sans-serif)}
+      .mob-nav-pop a:hover{background:rgba(212,175,55,0.14);color:#f0d068}
+      .mob-nav-pop a[aria-current="page"]{background:rgba(212,175,55,0.2);color:#f0d068;font-weight:700;border-inline-start:3px solid #d4af37}
+      @media(max-width:860px){header.topbar nav.nav{display:none !important}.mob-nav-btn{display:inline-flex}}
       .lang-wrap{position:relative;flex-shrink:0}
-      .lang-btn{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.32);color:#f7f5f0;padding:7px 11px;border-radius:999px;font:700 12px/1 var(--sans,sans-serif);cursor:pointer}
+      .lang-btn{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.32);color:#f7f5f0;padding:7px 11px;min-block-size:40px;border-radius:999px;font:700 12px/1 var(--sans,sans-serif);cursor:pointer}
       .lang-btn:hover{border-color:#f0d068;background:rgba(212,175,55,0.16)}
-      .lang-menu{position:absolute;top:calc(100% + 8px);inset-inline-end:0;min-width:176px;background:#11131a;border:1px solid rgba(212,175,55,0.38);border-radius:14px;padding:6px;display:none;z-index:120;box-shadow:0 20px 50px rgba(0,0,0,0.85);max-height:380px;overflow:auto}
+      .lang-menu{position:absolute;top:calc(100% + 8px);inset-inline-end:0;min-width:176px;background:#11131a;border:1px solid rgba(212,175,55,0.38);border-radius:14px;padding:6px;display:none;z-index:120;box-shadow:0 20px 50px rgba(0,0,0,0.85);max-height:min(380px,70dvh);overflow:auto}
       .lang-menu.open{display:grid;gap:2px}
-      .lang-opt{display:flex;align-items:center;gap:10px;width:100%;background:transparent;border:0;color:#f7f5f0;padding:8px 10px;border-radius:9px;font:500 13px/1.2 var(--sans,sans-serif);cursor:pointer;text-align:start}
+      .lang-opt{display:flex;align-items:center;gap:10px;width:100%;min-block-size:40px;background:transparent;border:0;color:#f7f5f0;padding:8px 10px;border-radius:9px;font:500 13px/1.2 var(--sans,sans-serif);cursor:pointer;text-align:start}
       .lang-opt:hover,.lang-opt[aria-selected="true"]{background:rgba(212,175,55,0.18);color:#f0d068}
+      @media(pointer:coarse){
+        :where(.btn,.chip,.cam-btn,.guest-btn,.lang-btn,.lang-opt,.mob-nav-btn,.icon-close,select,input:not([type="checkbox"],[type="radio"])){min-block-size:44px}
+        .foot-col a{display:inline-flex;align-items:center;min-block-size:40px}
+      }
     `;
     document.head.appendChild(st);
+  }
+
+  const actions = document.createElement('div');
+  actions.className = 'topbar-actions';
+
+  // Responsive popover menu for pages with <nav class="nav">
+  const desktopNav = topbar.querySelector('nav.nav');
+  if (desktopNav && !document.getElementById('mobNavPop')) {
+    const mobBtn = document.createElement('button');
+    mobBtn.type = 'button';
+    mobBtn.id = 'mobNavBtn';
+    mobBtn.className = 'mob-nav-btn';
+    mobBtn.setAttribute('popovertarget', 'mobNavPop');
+    mobBtn.setAttribute('popovertargetaction', 'toggle');
+    mobBtn.setAttribute('aria-controls', 'mobNavPop');
+    mobBtn.setAttribute('aria-label', 'Menü');
+    mobBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
+
+    const mobPop = document.createElement('div');
+    mobPop.id = 'mobNavPop';
+    mobPop.className = 'mob-nav-pop';
+    mobPop.setAttribute('popover', 'auto');
+    mobPop.setAttribute('role', 'region');
+    mobPop.setAttribute('aria-label', 'Menü');
+
+    const cur = location.pathname.split('/').pop() || 'merit-bilet.html';
+    const items = [
+      { href: 'merit-bilet.html', key: 'nav_home', fallback: 'Ana Sayfa' },
+      { href: 'yaklasan.html', key: 'nav_upcoming', fallback: 'Yaklaşan Etkinlikler' },
+      { href: 'takvim.html', key: 'nav_calendar', fallback: 'Etkinlik Takvimi' },
+      { href: 'biletim.html', key: 'nav_tickets', fallback: 'Biletim (PNR)' },
+      { href: 'kurumsal.html', key: 'nav_corp', fallback: 'Hakkımızda' },
+      { href: 'sss.html', key: 'nav_faq', fallback: 'Sık Sorulan Sorular' },
+      { href: 'iade.html', key: 'nav_refund', fallback: 'İade Koşulları' }
+    ];
+    mobPop.innerHTML = items.map(it =>
+      `<a href="${it.href}" data-i18n="${it.key}"${cur === it.href ? ' aria-current="page"' : ''}>${it.fallback}</a>`
+    ).join('');
+
+    if (!Object.hasOwn(HTMLElement.prototype, 'popover')) {
+      mobBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobPop.classList.toggle(':popover-open');
+      });
+      document.addEventListener('click', () => mobPop.classList.remove(':popover-open'));
+    }
+
+    actions.appendChild(mobBtn);
+    actions.appendChild(mobPop);
   }
 
   const wrap = document.createElement('div');
@@ -564,8 +639,8 @@ export function mountLanguageSwitcher() {
     </div>
   `;
 
-  // Appended at far RIGHT end of topbar!
-  topbar.appendChild(wrap);
+  actions.appendChild(wrap);
+  topbar.appendChild(actions);
 
   const btn = document.getElementById('langBtnCurrent');
   const menu = document.getElementById('langMenu');
