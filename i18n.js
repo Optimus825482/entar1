@@ -541,14 +541,17 @@ export function mountLanguageSwitcher() {
     const st = document.createElement('style');
     st.id = 'i18n-style';
     st.textContent = `
+      html{-webkit-text-size-adjust:100%;touch-action:manipulation}
       body{overflow-wrap:break-word}
       img,video,svg{max-inline-size:100%}
       :where(h1,h2,h3){text-wrap:balance}
       :where(p,li){text-wrap:pretty}
-      .wrap,.foot-wrap,.foot-grid>*,.arena-layout>*,.hero-grid>*,.detail-grid>*{min-inline-size:0}
+      .wrap,.foot-wrap,.foot-grid>*,.arena-layout>*,.hero-grid>*,.detail-grid>*,.cards>*,.grid>*,.poster-grid>*{min-inline-size:0;min-width:0}
       header.topbar{
+        -webkit-backdrop-filter:blur(14px);
         padding-top:max(12px,env(safe-area-inset-top,0px)) !important;
-        padding-inline:max(clamp(14px,3.5vw,36px),env(safe-area-inset-left,0px)) max(clamp(14px,3.5vw,36px),env(safe-area-inset-right,0px)) !important;
+        padding-left:max(clamp(14px,3.5vw,36px),env(safe-area-inset-left,0px)) !important;
+        padding-right:max(clamp(14px,3.5vw,36px),env(safe-area-inset-right,0px)) !important;
       }
       footer.site-footer{
         padding-bottom:max(28px,env(safe-area-inset-bottom,0px)) !important;
@@ -556,25 +559,30 @@ export function mountLanguageSwitcher() {
       header.topbar .brand img{height:60px !important;width:auto}
       @media(max-width:640px){header.topbar .brand img{height:44px !important}}
       .topbar-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
-      .mob-nav-btn{display:none;align-items:center;justify-content:center;gap:6px;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.32);color:#f7f5f0;min-inline-size:44px;min-block-size:40px;padding:7px 11px;border-radius:999px;font:700 16px/1 var(--sans,sans-serif);cursor:pointer;anchor-name:--mob-nav-btn}
-      .mob-nav-btn:hover{border-color:#f0d068;background:rgba(212,175,55,0.16)}
-      .mob-nav-pop{position:fixed;inset:auto;inset-block-start:4.75rem;inset-block-start:anchor(--mob-nav-btn bottom);inset-inline-end:1rem;margin-block-start:0.5rem;inline-size:min(86dvw,20rem);max-inline-size:calc(100dvw - 2rem);max-block-size:calc(100dvh - 6rem);overflow:auto;background:#11131a;border:1px solid rgba(212,175,55,0.38);border-radius:16px;padding:10px;z-index:130;box-shadow:0 24px 60px rgba(0,0,0,0.88)}
-      .mob-nav-pop:not(:is(:popover-open,.\:popover-open)){display:none}
-      .mob-nav-pop:is(:popover-open,.\:popover-open){display:grid;gap:4px}
-      .mob-nav-pop a{display:flex;align-items:center;min-block-size:44px;padding:10px 14px;border-radius:10px;color:#f7f5f0;text-decoration:none;font:500 14px/1.25 var(--sans,sans-serif)}
+      .mob-nav-btn{display:none;align-items:center;justify-content:center;gap:6px;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.32);color:#f7f5f0;min-width:44px;min-height:40px;padding:7px 11px;border-radius:999px;font:700 16px/1 var(--sans,sans-serif);cursor:pointer}
+      .mob-nav-btn:hover,.mob-nav-btn[aria-expanded="true"]{border-color:#f0d068;background:rgba(212,175,55,0.16)}
+      .mob-nav-pop{position:fixed;top:72px;right:14px;width:min(86vw,320px);width:min(86dvw,20rem);max-width:calc(100vw - 28px);max-height:calc(100vh - 90px);max-height:calc(100dvh - 6rem);overflow:auto;background:#11131a;border:1px solid rgba(212,175,55,0.38);border-radius:16px;padding:10px;z-index:150;box-shadow:0 24px 60px rgba(0,0,0,0.88);display:none}
+      [dir="rtl"] .mob-nav-pop{right:auto;left:14px}
+      .mob-nav-pop.open{display:grid;gap:4px}
+      .mob-nav-pop a{display:flex;align-items:center;min-height:44px;padding:10px 14px;border-radius:10px;color:#f7f5f0;text-decoration:none;font:500 14px/1.25 var(--sans,sans-serif)}
       .mob-nav-pop a:hover{background:rgba(212,175,55,0.14);color:#f0d068}
-      .mob-nav-pop a[aria-current="page"]{background:rgba(212,175,55,0.2);color:#f0d068;font-weight:700;border-inline-start:3px solid #d4af37}
+      .mob-nav-pop a[aria-current="page"]{background:rgba(212,175,55,0.2);color:#f0d068;font-weight:700;border-left:3px solid #d4af37}
+      [dir="rtl"] .mob-nav-pop a[aria-current="page"]{border-left:0;border-right:3px solid #d4af37}
       @media(max-width:860px){header.topbar nav.nav{display:none !important}.mob-nav-btn{display:inline-flex}}
       .lang-wrap{position:relative;flex-shrink:0}
-      .lang-btn{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.32);color:#f7f5f0;padding:7px 11px;min-block-size:40px;border-radius:999px;font:700 12px/1 var(--sans,sans-serif);cursor:pointer}
+      .lang-btn{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.06);border:1px solid rgba(212,175,55,0.32);color:#f7f5f0;padding:7px 11px;min-height:40px;border-radius:999px;font:700 12px/1 var(--sans,sans-serif);cursor:pointer}
       .lang-btn:hover{border-color:#f0d068;background:rgba(212,175,55,0.16)}
-      .lang-menu{position:absolute;top:calc(100% + 8px);inset-inline-end:0;min-width:176px;background:#11131a;border:1px solid rgba(212,175,55,0.38);border-radius:14px;padding:6px;display:none;z-index:120;box-shadow:0 20px 50px rgba(0,0,0,0.85);max-height:min(380px,70dvh);overflow:auto}
+      .lang-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:176px;background:#11131a;border:1px solid rgba(212,175,55,0.38);border-radius:14px;padding:6px;display:none;z-index:160;box-shadow:0 20px 50px rgba(0,0,0,0.85);max-height:min(380px,70vh);max-height:min(380px,70dvh);overflow:auto}
+      [dir="rtl"] .lang-menu{right:auto;left:0}
       .lang-menu.open{display:grid;gap:2px}
-      .lang-opt{display:flex;align-items:center;gap:10px;width:100%;min-block-size:40px;background:transparent;border:0;color:#f7f5f0;padding:8px 10px;border-radius:9px;font:500 13px/1.2 var(--sans,sans-serif);cursor:pointer;text-align:start}
+      .lang-opt{display:flex;align-items:center;gap:10px;width:100%;min-height:40px;background:transparent;border:0;color:#f7f5f0;padding:8px 10px;border-radius:9px;font:500 13px/1.2 var(--sans,sans-serif);cursor:pointer;text-align:left}
+      [dir="rtl"] .lang-opt{text-align:right}
       .lang-opt:hover,.lang-opt[aria-selected="true"]{background:rgba(212,175,55,0.18);color:#f0d068}
+      dialog.modal{max-height:90vh;max-height:90dvh;overflow:auto}
       @media(pointer:coarse){
-        :where(.btn,.chip,.cam-btn,.guest-btn,.lang-btn,.lang-opt,.mob-nav-btn,.icon-close,select,input:not([type="checkbox"],[type="radio"])){min-block-size:44px}
-        .foot-col a{display:inline-flex;align-items:center;min-block-size:40px}
+        .btn,.chip,.cam-btn,.guest-btn,.lang-btn,.lang-opt,.mob-nav-btn,.icon-close{min-height:44px}
+        input:not([type="checkbox"]):not([type="radio"]),select,textarea{min-height:44px;font-size:16px !important}
+        .foot-col a{display:inline-flex;align-items:center;min-height:40px}
       }
     `;
     document.head.appendChild(st);
@@ -583,23 +591,23 @@ export function mountLanguageSwitcher() {
   const actions = document.createElement('div');
   actions.className = 'topbar-actions';
 
-  // Responsive popover menu for pages with <nav class="nav">
+  // Universal fixed mobile navigation menu (works identically on Safari, Firefox, Chrome & WebView)
   const desktopNav = topbar.querySelector('nav.nav');
+  let mobBtn = null;
+  let mobPop = null;
   if (desktopNav && !document.getElementById('mobNavPop')) {
-    const mobBtn = document.createElement('button');
+    mobBtn = document.createElement('button');
     mobBtn.type = 'button';
     mobBtn.id = 'mobNavBtn';
     mobBtn.className = 'mob-nav-btn';
-    mobBtn.setAttribute('popovertarget', 'mobNavPop');
-    mobBtn.setAttribute('popovertargetaction', 'toggle');
     mobBtn.setAttribute('aria-controls', 'mobNavPop');
+    mobBtn.setAttribute('aria-expanded', 'false');
     mobBtn.setAttribute('aria-label', 'Menü');
     mobBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
 
-    const mobPop = document.createElement('div');
+    mobPop = document.createElement('div');
     mobPop.id = 'mobNavPop';
     mobPop.className = 'mob-nav-pop';
-    mobPop.setAttribute('popover', 'auto');
     mobPop.setAttribute('role', 'region');
     mobPop.setAttribute('aria-label', 'Menü');
 
@@ -617,16 +625,32 @@ export function mountLanguageSwitcher() {
       `<a href="${it.href}" data-i18n="${it.key}"${cur === it.href ? ' aria-current="page"' : ''}>${it.fallback}</a>`
     ).join('');
 
-    if (!Object.hasOwn(HTMLElement.prototype, 'popover')) {
-      mobBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        mobPop.classList.toggle(':popover-open');
-      });
-      document.addEventListener('click', () => mobPop.classList.remove(':popover-open'));
-    }
-
     actions.appendChild(mobBtn);
-    actions.appendChild(mobPop);
+    document.body.appendChild(mobPop);
+
+    const closeMobNav = () => {
+      mobPop.classList.remove('open');
+      mobBtn.setAttribute('aria-expanded', 'false');
+    };
+    mobBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const willOpen = !mobPop.classList.contains('open');
+      if (willOpen) {
+        const r = topbar.getBoundingClientRect();
+        mobPop.style.top = Math.round(r.bottom + 8) + 'px';
+        mobPop.classList.add('open');
+        mobBtn.setAttribute('aria-expanded', 'true');
+        const langMenu = document.getElementById('langMenu');
+        if (langMenu) langMenu.classList.remove('open');
+        const langBtn = document.getElementById('langBtnCurrent');
+        if (langBtn) langBtn.setAttribute('aria-expanded', 'false');
+      } else {
+        closeMobNav();
+      }
+    });
+    mobPop.addEventListener('click', (e) => e.stopPropagation());
+    document.addEventListener('click', closeMobNav);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMobNav(); });
   }
 
   const wrap = document.createElement('div');
