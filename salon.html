@@ -941,13 +941,16 @@ canvas.addEventListener('pointermove', (e) => {
 });
 
 let downPt = null;
+let openModalTimer = null;
 canvas.addEventListener('pointerdown', (e) => { downPt = [e.clientX, e.clientY]; });
 canvas.addEventListener('pointerup', (e) => {
   if (!downPt || Math.hypot(e.clientX - downPt[0], e.clientY - downPt[1]) >= 6) return;
   const u = getHit(e);
   if (u && !u.soldOut && u.freeCount >= guestCount) {
     selectUnit(u);
-    openMobileInspector();
+    hoverTip.style.display = 'none';
+    clearTimeout(openModalTimer);
+    openModalTimer = setTimeout(openMobileInspector, 120);
   }
 });
 
@@ -1037,16 +1040,23 @@ document.getElementById('btnSeatPov').addEventListener('click', () => {
 
 // Table / Loca Inspector Modal (opens on every table/loca click across desktop & mobile)
 const mobileInspectorDialog = document.getElementById('mobileInspectorDialog');
+let dlgOpenedAt = 0;
 
 function openMobileInspector() {
+  hoverTip.style.display = 'none';
   if (!mobileInspectorDialog.open) {
+    dlgOpenedAt = performance.now();
     mobileInspectorDialog.showModal();
   }
 }
 document.getElementById('closeInsModal').addEventListener('click', () => mobileInspectorDialog.close());
-document.getElementById('btnCloseInsBottom').addEventListener('click', () => mobileInspectorDialog.close());
+document.getElementById('btnCloseInsBottom').addEventListener('click', () => {
+  if (performance.now() - dlgOpenedAt < 180) return;
+  mobileInspectorDialog.close();
+});
 document.getElementById('btnSelectedPill').addEventListener('click', openMobileInspector);
 document.getElementById('btnSeatPovModal').addEventListener('click', () => {
+  if (performance.now() - dlgOpenedAt < 180) return;
   if (mobileInspectorDialog.open) mobileInspectorDialog.close();
   document.getElementById('btnSeatPov').click();
 });
