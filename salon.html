@@ -76,17 +76,16 @@
     background: var(--bg-card); color: var(--ink); font-weight: 700; cursor: pointer;
   }
 
-  .arena-layout { display: grid; grid-template-columns: minmax(0, 1fr) 390px; gap: 18px; align-items: start; }
-  @media (max-width: 1060px) { .arena-layout { grid-template-columns: 1fr; } }
+  .arena-layout { display: grid; grid-template-columns: 1fr; gap: 18px; align-items: start; }
 
   .viewport-card {
     position: relative; background: #050609; border: 1px solid var(--line);
-    border-radius: 20px; overflow: hidden; height: 650px;
+    border-radius: 20px; overflow: hidden; height: clamp(480px, 72vh, 720px); height: clamp(480px, 72dvh, 720px);
   }
   @media (max-width: 640px) {
     header.topbar { padding: 10px 12px; gap: 8px; flex-wrap: wrap; }
     header.topbar .back-event-btn { order: 3; width: 100%; justify-content: center; padding: 8px 12px; font-size: 12px; }
-    .viewport-card { height: min(60vh, 440px); height: min(60dvh, 440px); min-height: 340px; }
+    .viewport-card { height: min(64vh, 480px); height: min(64dvh, 480px); min-height: 360px; }
     .cam-toolbar { top: 10px; left: 10px; right: 10px; gap: 5px; }
     .cam-btn { padding: 6px 9px; font-size: 11px; }
     .viewport-legend { left: 10px; right: 10px; bottom: 10px; padding: 7px 10px; font-size: 11px; }
@@ -95,12 +94,12 @@
     .view-preview-cap { flex-wrap: wrap; gap: 4px; }
   }
   #tableSearch { width: min(100%, 175px) !important; flex: 1 1 140px; }
-  @media (max-width: 420px) { .eticket-meta { grid-template-columns: 1fr !important; } }
-  .inspector-close { display: none; }
-  #mobileInspectorDialog .inspector-close { display: inline-flex; align-items: center; justify-content: center; }
-  #mobileInspectorDialog.modal { width: min(440px, 94vw); padding: 0; }
+  @media (max-width: 420px) { .eticket-meta { grid-template-columns: 1fr !important; } .inspector-row-btns { grid-template-columns: 1fr !important; } }
+  .inspector-close { display: inline-flex; align-items: center; justify-content: center; }
+  #mobileInspectorDialog.modal { width: min(460px, 94vw); padding: 0; }
   #mobileInspectorDialog .inspector { border: 0; border-radius: 0; width: 100%; }
   .inspector-actions { display: grid; gap: 10px; }
+  .inspector-row-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   dialog:modal { overscroll-behavior: contain; }
   dialog::backdrop { overflow: hidden; overscroll-behavior: contain; }
   #canvas3d { width: 100%; height: 100%; display: block; cursor: grab; }
@@ -198,8 +197,12 @@
     </div>
 
     <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
-      <div class="guest-stepper" style="border-color:var(--line-soft); font-size:12.5px;">
-        <span style="color:var(--muted);" data-i18n="salon_hold">Masa tutma süresi:</span>
+      <button type="button" class="guest-stepper" id="btnSelectedPill" style="cursor:pointer; border-color:rgba(59,130,246,0.5); font-size:12.5px; color:var(--ink); font-family:inherit;">
+        <span style="color:var(--muted);">Seçili:</span>
+        <b id="topSelLabel" style="color:#60a5fa;">Masa 37</b>
+      </button>
+      <div class="guest-stepper" id="holdBadge" style="border-color:var(--line-soft); font-size:12.5px;">
+        <span id="holdLabel" style="color:var(--muted);" data-i18n="salon_hold">Masa tutma süresi:</span>
         <b id="holdTimer" style="color:var(--gold-bright); font-variant-numeric:tabular-nums;">10:00</b>
       </div>
       <div class="guest-stepper" aria-label="Kişi sayısı">
@@ -232,40 +235,6 @@
         <span>Sürükle: Döndür · Tekerlek: Yakınlaştır</span>
       </div>
     </div>
-
-    <aside class="inspector" id="inspectorCard" aria-label="Seçili masa özeti">
-      <div class="inspector-head">
-        <div>
-          <h2 id="insTitle">Masa Seçin</h2>
-          <div style="font-size:12.5px; color:var(--muted);" id="insSub">Müsait bir masa veya locaya tıklayın</div>
-        </div>
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span class="type-pill" id="insType">Masa</span>
-          <button type="button" class="icon-close inspector-close" id="closeInsModal" aria-label="Kapat">×</button>
-        </div>
-      </div>
-
-      <div class="view-preview">
-        <img id="insPhoto" alt="Masadan canlı sahne görünümü">
-        <div class="view-preview-cap">
-          <span id="insViewLabel" data-i18n="salon_view">Masadan Sahne Görünümü</span>
-          <span id="insAngleBadge" style="font-size:11px; color:var(--gold-bright); font-weight:700;">—</span>
-        </div>
-      </div>
-
-      <div>
-        <div class="summary-row"><span data-i18n="salon_event">Etkinlik</span><b id="sumEvent">—</b></div>
-        <div class="summary-row"><span data-i18n="salon_pick">Seçim</span><b id="sumPick">—</b></div>
-        <div class="summary-row"><span data-i18n="salon_unit_price">Kişi Başı Fiyat</span><b id="sumUnit">—</b></div>
-        <div class="summary-row"><span data-i18n="salon_fee">Hizmet &amp; KDV</span><b data-i18n="salon_fee_inc" style="color:var(--ok);">Dahil</b></div>
-        <div class="summary-row"><span data-i18n="salon_total">Toplam Tutar</span><span class="summary-total" id="sumTotal">₺0</span></div>
-      </div>
-
-      <div class="inspector-actions">
-        <button type="button" class="btn btn-ghost" id="btnSeatPovModal" style="width:100%; border-color:var(--gold); color:var(--gold-bright);" data-i18n="salon_pov">Masadan Sahneye Bak</button>
-        <button type="button" class="btn btn-primary" id="btnCheckout" disabled style="width:100%;" data-i18n="salon_checkout">Seç &amp; Ödemeye Geç →</button>
-      </div>
-    </aside>
   </div>
 </main>
 
@@ -312,8 +281,45 @@
   </div>
 </footer>
 
-<!-- MOBİL MASA ÖZET DİYALOĞU -->
-<dialog class="modal" id="mobileInspectorDialog" closedby="any" aria-labelledby="insTitle"></dialog>
+<!-- MASA / LOCA ÖZET & SAHNE GÖRÜNÜM MODALI -->
+<dialog class="modal" id="mobileInspectorDialog" closedby="any" aria-labelledby="insTitle">
+  <aside class="inspector" id="inspectorCard" aria-label="Seçili masa özeti">
+    <div class="inspector-head">
+      <div>
+        <h2 id="insTitle">Masa Seçin</h2>
+        <div style="font-size:12.5px; color:var(--muted);" id="insSub">Müsait bir masa veya locaya tıklayın</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="type-pill" id="insType">Masa</span>
+        <button type="button" class="icon-close inspector-close" id="closeInsModal" aria-label="Kapat">×</button>
+      </div>
+    </div>
+
+    <div class="view-preview">
+      <img id="insPhoto" alt="Masadan canlı sahne görünümü">
+      <div class="view-preview-cap">
+        <span id="insViewLabel" data-i18n="salon_view">Masadan Sahne Görünümü</span>
+        <span id="insAngleBadge" style="font-size:11px; color:var(--gold-bright); font-weight:700;">—</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="summary-row"><span data-i18n="salon_event">Etkinlik</span><b id="sumEvent">—</b></div>
+      <div class="summary-row"><span data-i18n="salon_pick">Seçim</span><b id="sumPick">—</b></div>
+      <div class="summary-row"><span data-i18n="salon_unit_price">Kişi Başı Fiyat</span><b id="sumUnit">—</b></div>
+      <div class="summary-row"><span data-i18n="salon_fee">Hizmet &amp; KDV</span><b data-i18n="salon_fee_inc" style="color:var(--ok);">Dahil</b></div>
+      <div class="summary-row"><span data-i18n="salon_total">Toplam Tutar</span><span class="summary-total" id="sumTotal">₺0</span></div>
+    </div>
+
+    <div class="inspector-actions">
+      <div class="inspector-row-btns">
+        <button type="button" class="btn btn-ghost" id="btnSeatPovModal" style="width:100%; border-color:var(--gold); color:var(--gold-bright);" data-i18n="salon_pov">Masadan Sahneye Bak</button>
+        <button type="button" class="btn btn-ghost" id="btnCloseInsBottom" style="width:100%;">Kapat</button>
+      </div>
+      <button type="button" class="btn btn-primary" id="btnCheckout" disabled style="width:100%;" data-i18n="salon_checkout">Seç &amp; Ödemeye Geç →</button>
+    </div>
+  </aside>
+</dialog>
 
 <!-- ÖDEME & E-BİLET MODALI -->
 <dialog class="modal" id="checkoutModal" closedby="any" aria-labelledby="chkTitle">
@@ -322,6 +328,10 @@
     <button type="button" class="icon-close" id="closeChk" aria-label="Kapat">×</button>
   </div>
   <div class="modal-body" id="step2">
+    <div style="background:rgba(212,175,55,0.12); border:1px solid var(--gold); padding:9px 13px; border-radius:10px; font-size:12.5px; display:flex; justify-content:space-between; align-items:center; gap:8px;">
+      <span id="chkHoldText" style="color:var(--ink);">⏳ Masa sizin için tutuluyor</span>
+      <b id="chkHoldTimer" style="color:var(--gold-bright); font-variant-numeric:tabular-nums;">10:00</b>
+    </div>
     <div style="background:var(--bg-card); padding:12px 14px; border-radius:12px; font-size:13px;">
       <b style="color:var(--gold-bright);" id="chkEv"></b>
       <div style="color:var(--muted); margin-top:3px;" id="chkDesc"></div>
@@ -967,6 +977,7 @@ function selectUnit(u) {
   selBodyGlow.scale.set(isLoca ? 0.90 : 1, 1, isLoca ? 0.90 : 1);
 
   document.getElementById('insTitle').textContent = u.label;
+  document.getElementById('topSelLabel').textContent = u.label;
   document.getElementById('insSub').textContent = isLoca ? 'Yükseltilmiş Balkon · 12 Kişilik' : `${u.freeCount} kişilik yer müsait`;
   document.getElementById('insType').textContent = isLoca ? 'Loca' : 'Masa';
   document.getElementById('insViewLabel').textContent = `${u.label} — Sahne Görünümü`;
@@ -1024,24 +1035,17 @@ document.getElementById('btnSeatPov').addEventListener('click', () => {
   flyCamera([selectedUnit.x, selectedUnit.y + 2.0, selectedUnit.z], [0, 3.8, -24], 800);
 });
 
-// Mobile Table Inspector Dialog (<= 1060px)
-const arenaLayout = document.querySelector('.arena-layout');
-const inspectorCard = document.getElementById('inspectorCard');
+// Table / Loca Inspector Modal (opens on every table/loca click across desktop & mobile)
 const mobileInspectorDialog = document.getElementById('mobileInspectorDialog');
-const isMobileLayout = () => window.matchMedia('(max-width: 1060px)').matches;
 
 function openMobileInspector() {
-  if (!isMobileLayout() || mobileInspectorDialog.open) return;
-  mobileInspectorDialog.appendChild(inspectorCard);
-  mobileInspectorDialog.showModal();
-}
-function restoreInspector() {
-  if (inspectorCard.parentElement !== arenaLayout) {
-    arenaLayout.appendChild(inspectorCard);
+  if (!mobileInspectorDialog.open) {
+    mobileInspectorDialog.showModal();
   }
 }
-mobileInspectorDialog.addEventListener('close', restoreInspector);
 document.getElementById('closeInsModal').addEventListener('click', () => mobileInspectorDialog.close());
+document.getElementById('btnCloseInsBottom').addEventListener('click', () => mobileInspectorDialog.close());
+document.getElementById('btnSelectedPill').addEventListener('click', openMobileInspector);
 document.getElementById('btnSeatPovModal').addEventListener('click', () => {
   if (mobileInspectorDialog.open) mobileInspectorDialog.close();
   document.getElementById('btnSeatPov').click();
@@ -1060,10 +1064,41 @@ if (!('closedBy' in HTMLDialogElement.prototype)) {
   });
 }
 
+// Hold Countdown Timer (starts ONLY when pressing "Seç & Ödemeye Geç →")
+let holdSec = 600;
+let holdInterval = null;
+function renderHoldTime() {
+  const mm = String(Math.floor(holdSec / 60)).padStart(2, '0');
+  const ss = String(holdSec % 60).padStart(2, '0');
+  const txt = `${mm}:${ss}`;
+  const el = document.getElementById('holdTimer');
+  const cel = document.getElementById('chkHoldTimer');
+  if (el) el.textContent = txt;
+  if (cel) cel.textContent = txt;
+}
+function startHoldTimer(u) {
+  if (holdInterval) clearInterval(holdInterval);
+  holdSec = 600;
+  document.getElementById('holdBadge').style.borderColor = 'var(--gold)';
+  document.getElementById('holdLabel').textContent = `${u.label} tutuluyor:`;
+  document.getElementById('chkHoldText').textContent = `⏳ ${u.label} sizin için tutuluyor`;
+  renderHoldTime();
+  holdInterval = setInterval(() => {
+    if (holdSec > 0) holdSec--;
+    renderHoldTime();
+    if (holdSec === 0) {
+      clearInterval(holdInterval);
+      holdInterval = null;
+      document.getElementById('holdLabel').textContent = 'Tutma süresi doldu:';
+    }
+  }, 1000);
+}
+
 // Checkout Modal
 const modal = document.getElementById('checkoutModal');
 document.getElementById('btnCheckout').addEventListener('click', () => {
   if (mobileInspectorDialog.open) mobileInspectorDialog.close();
+  startHoldTimer(selectedUnit);
   document.getElementById('step2').style.display = 'flex';
   document.getElementById('step3').style.display = 'none';
   document.getElementById('chkEv').textContent = `${activeEvent.artist} · ${activeEvent.date} · Saat ${activeEvent.time}`;
@@ -1110,15 +1145,7 @@ document.getElementById('btnShowMyTable').addEventListener('click', () => {
   flyCamera([selectedUnit.x, selectedUnit.y + 8, selectedUnit.z + 9], [selectedUnit.x, selectedUnit.y + 0.5, selectedUnit.z], 800);
 });
 
-// 10:00 Hold Countdown Timer
-let holdSec = 600;
-setInterval(() => {
-  if (holdSec > 0) holdSec--;
-  const mm = String(Math.floor(holdSec / 60)).padStart(2, '0');
-  const ss = String(holdSec % 60).padStart(2, '0');
-  const el = document.getElementById('holdTimer');
-  if (el) el.textContent = `${mm}:${ss}`;
-}, 1000);
+// Hold timer initializes on #btnCheckout click via startHoldTimer()
 
 // Quick Table Number Search (e.g. "45" or "L1")
 document.getElementById('tableSearch').addEventListener('change', (e) => {
