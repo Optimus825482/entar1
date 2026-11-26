@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Merit Entertainment · Konser & Gala Biletleri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08090d; --bg-elev: #11131a; --bg-card: #161923;
+    --ink: #f7f5f0; --muted: #a6aab8;
+    --line: rgba(212, 175, 55, 0.22); --line-soft: rgba(255, 255, 255, 0.08);
+    --gold: #d4af37; --gold-bright: #f0d068; --gold-dim: rgba(212, 175, 55, 0.14);
+    --serif: "Cormorant Garamond", Georgia, serif;
+    --sans: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+  :focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 2px; }
+
+  /* Header */
+  header.topbar {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 14px clamp(16px, 4vw, 44px);
+    background: rgba(8, 9, 13, 0.88); backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); }
+  .brand-logo { width: 40px; height: 40px; flex-shrink: 0; }
+  .brand-text b { display: block; font-size: 13.5px; letter-spacing: .2em; text-transform: uppercase; font-weight: 700; color: var(--gold-bright); }
+  .brand-text span { display: block; font-size: 10.5px; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+
+  nav.nav { display: flex; align-items: center; gap: 22px; }
+  nav.nav a { color: var(--muted); text-decoration: none; font-size: 13.5px; font-weight: 500; transition: color .2s; }
+  nav.nav a:hover, nav.nav a[aria-current="page"] { color: var(--ink); }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 24px; border-radius: 999px; font-weight: 700; font-size: 14px;
+    border: 1px solid transparent; cursor: pointer; text-decoration: none; font-family: inherit;
+    transition: background .18s, transform .18s, border-color .18s;
+  }
+  .btn-primary { background: var(--gold); color: #08090d; }
+  .btn-primary:hover { background: var(--gold-bright); transform: translateY(-1px); }
+  .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+  .btn-ghost:hover { background: var(--gold-dim); border-color: var(--gold); }
+  .nav-cta { padding: 9px 18px; font-size: 13px; }
+  @media (max-width: 860px) { nav.nav a:not(.nav-cta) { display: none; } }
+
+  .wrap { width: 100%; max-width: 1320px; margin: 0 auto; padding: 0 clamp(16px, 3.5vw, 36px); }
+
+  /* Rotating Hero */
+  .hero { position: relative; padding: clamp(36px, 5vw, 68px) 0 52px; overflow: hidden; }
+  .hero-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(900px 500px at 75% 25%, rgba(212, 175, 55, 0.16), transparent 65%); }
+  .hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(28px, 5vw, 60px); align-items: center; }
+  @media (max-width: 960px) { .hero-grid { grid-template-columns: 1fr; } }
+
+  .eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 11.5px; letter-spacing: .24em; text-transform: uppercase; font-weight: 700; color: var(--gold); margin-bottom: 14px; }
+  .eyebrow::before { content: ""; width: 28px; height: 1px; background: var(--gold); }
+
+  h1.hero-title { font-family: var(--serif); font-weight: 600; font-size: clamp(44px, 6.2vw, 76px); line-height: 1.02; margin: 0; }
+  h1.hero-title em { font-style: italic; color: var(--gold-bright); font-weight: 500; }
+  .hero-meta { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-top: 22px; padding: 15px 20px; border-radius: 14px; background: var(--bg-elev); border: 1px solid var(--line-soft); font-size: 14px; }
+  .hero-meta span { color: var(--muted); }
+  .hero-meta b { color: var(--ink); font-weight: 600; }
+  .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 24px; }
+
+  .hero-dots { display: flex; gap: 8px; margin-top: 24px; }
+  .hero-dots button {
+    width: 28px; height: 4px; border-radius: 4px; border: 0; padding: 0; cursor: pointer;
+    background: rgba(255,255,255,0.22); transition: all .25s;
+  }
+  .hero-dots button.active { background: var(--gold); width: 48px; }
+
+  .hero-stage {
+    position: relative; border-radius: 22px; overflow: hidden;
+    border: 1px solid var(--line); aspect-ratio: 9 / 11; max-height: 540px; width: min(440px, 100%); justify-self: center;
+    background: var(--bg-card); box-shadow: 0 36px 90px -32px rgba(0,0,0,0.9);
+  }
+  .hero-stage video { width: 100%; height: 100%; object-fit: cover; object-position: center 15%; display: block; }
+  .hero-stage-cap {
+    position: absolute; inset: auto 0 0 0; padding: 20px 22px;
+    background: linear-gradient(180deg, transparent, rgba(8,9,13,0.92) 72%);
+    display: flex; justify-content: space-between; align-items: flex-end; gap: 12px;
+  }
+
+  /* Merit Entertainment Manifesto Statement */
+  .manifesto {
+    padding: 52px 0; border-top: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft);
+    background: linear-gradient(180deg, rgba(212,175,55,0.05), transparent);
+    text-align: center;
+  }
+  .manifesto p {
+    font-family: var(--serif); font-size: clamp(22px, 2.8vw, 32px); line-height: 1.42;
+    max-width: 48ch; margin: 12px auto 0; color: var(--ink); font-weight: 500;
+  }
+
+  /* Gelecek Organizasyonlar (Silent Video Reels) */
+  .reels-strip { padding: 60px 0 76px; }
+  .strip-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 14px; margin-bottom: 26px; }
+  .strip-head h2 { font-family: var(--serif); font-size: clamp(30px, 4vw, 44px); margin: 0; }
+  .reels-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+  .reel-card {
+    position: relative; border-radius: 16px; overflow: hidden; aspect-ratio: 9 / 14;
+    border: 1px solid var(--line-soft); background: #0b0d14;
+    transition: border-color .2s, transform .2s;
+  }
+  .reel-card:hover { border-color: var(--gold); transform: translateY(-3px); }
+  .reel-card video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .reel-cap {
+    position: absolute; inset: auto 0 0 0; padding: 16px;
+    background: linear-gradient(180deg, transparent, rgba(8,9,13,0.95) 72%);
+  }
+  .reel-cap b { display: block; font-family: var(--serif); font-size: 22px; line-height: 1.1; }
+  .reel-cap span { font-size: 11.5px; color: var(--gold-bright); }
+
+  /* Luxury Footer */
+  footer.site-footer {
+    background: #06070a; border-top: 1px solid var(--line);
+    padding: 56px 0 28px; color: var(--muted); font-size: 13.5px;
+  }
+  .foot-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 32px; padding-bottom: 36px; border-bottom: 1px solid var(--line-soft); }
+  @media (max-width: 860px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) { .foot-grid { grid-template-columns: 1fr; } }
+  .foot-col h4 { margin: 0 0 14px; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold-bright); }
+  .foot-col ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 9px; }
+  .foot-col a { color: var(--muted); text-decoration: none; transition: color .16s; }
+  .foot-col a:hover { color: var(--ink); }
+  .foot-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding-top: 22px; font-size: 12.5px; }
+
+  /* Guest Count Modal */
+  dialog.modal { background: var(--bg-elev); color: var(--ink); border: 1px solid var(--gold); border-radius: 20px; padding: 0; width: min(460px, 94vw); box-shadow: 0 32px 90px rgba(0,0,0,0.88); }
+  dialog.modal::backdrop { background: rgba(4, 5, 9, 0.8); backdrop-filter: blur(6px); }
+  .modal-head { display: flex; justify-content: space-between; align-items: center; padding: 18px 22px; border-bottom: 1px solid var(--line-soft); }
+  .modal-head h3 { margin: 0; font-family: var(--serif); font-size: 26px; }
+  .icon-close { background: transparent; border: 1px solid var(--line-soft); color: var(--muted); width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font-size: 18px; }
+  .modal-body { padding: 22px; display: flex; flex-direction: column; gap: 16px; }
+  .guest-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .guest-btn { padding: 12px 0; border-radius: 10px; border: 1px solid var(--line-soft); background: var(--bg-card); color: var(--ink); font-weight: 700; cursor: pointer; font-family: inherit; }
+  .guest-btn[aria-pressed="true"] { background: var(--gold); color: #08090d; border-color: var(--gold); }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="merit-bilet.html" class="brand" aria-label="Merit Entertainment Ana Sayfa">
+    <img src="assets/merit-entertainment-logo.svg" alt="Merit Entertainment" style="height:46px; width:auto; display:block;">
+  </a>
+  <nav class="nav" aria-label="Ana menü">
+    <a href="merit-bilet.html" aria-current="page" data-i18n="nav_home">Ana Sayfa</a>
+    <a href="yaklasan.html" data-i18n="nav_upcoming">Yaklaşan Etkinlikler</a>
+    <a href="takvim.html" data-i18n="nav_calendar">Etkinlik Takvimi</a>
+    <a href="biletim.html" data-i18n="nav_tickets">Biletim (PNR)</a>
+    <a href="kurumsal.html" data-i18n="nav_corp">Hakkımızda</a>
+    <button type="button" class="btn btn-primary nav-cta" id="navBuyBtn" data-i18n="btn_buy">Bilet Al</button>
+  </nav>
+</header>
+
+<main>
+  <!-- ROTATING HERO (Starts with Levent Yüksel!) -->
+  <section class="hero" aria-labelledby="heroTitle">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow" id="heroEyebrow">Gala Konseri · 12 Aralık 2026</div>
+        <h1 class="hero-title" id="heroTitle">Levent Yüksel<br><em>Aralık Galası</em></h1>
+        <div class="hero-meta">
+          <span><span data-i18n="lbl_date">Tarih:</span> <b id="heroDate">12 Aralık 2026 · Cumartesi</b></span>
+          <span><span data-i18n="lbl_time">Saat:</span> <b id="heroTime">22:00</b></span>
+          <span><span data-i18n="lbl_venue">Mekan:</span> <b>Diamond Haluk Elver Salonu</b></span>
+        </div>
+        <div class="hero-actions">
+          <button type="button" class="btn btn-primary" id="heroBuyBtn" data-i18n="btn_buy">Bilet Al</button>
+          <a href="etkinlik.html?id=levent" id="heroDetailBtn" class="btn btn-ghost" data-i18n="btn_detail">Detaylar</a>
+          <a href="takvim.html" class="btn btn-ghost" data-i18n="btn_calendar_all">Etkinlik Takvimi →</a>
+        </div>
+        <div class="hero-dots" id="heroDots" role="tablist" aria-label="Öne çıkan konserler"></div>
+      </div>
+
+      <div class="hero-stage">
+        <video id="heroVideo" autoplay muted loop playsinline poster="assets/artists/levent-yuksel.jpg"></video>
+        <div class="hero-stage-cap">
+          <div>
+            <div style="font-size:12px; color:var(--gold-bright); font-weight:700; letter-spacing:.08em; text-transform:uppercase;" id="heroCapSub">Merit Royal Diamond</div>
+            <div style="font-size:13.5px; color:var(--muted);"><span data-i18n="lbl_start">Başlangıç:</span> <b style="color:var(--ink)" id="heroPrice">₺7.500</b> <span data-i18n="per_person">/ kişi</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GELECEK ORGANİZASYONLAR -->
+  <section class="reels-strip" aria-labelledby="future-title">
+    <div class="wrap">
+      <div class="strip-head">
+        <div>
+          <div class="eyebrow">Merit Entertainment</div>
+          <h2 id="future-title" data-i18n="sec_future">Gelecek Organizasyonlar</h2>
+        </div>
+        <a href="yaklasan.html" class="btn btn-ghost" data-i18n="btn_upcoming_all">Tüm Yaklaşan Etkinlikler →</a>
+      </div>
+      <div class="reels-grid" id="reelsGrid"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+          <b style="color:var(--gold-bright); letter-spacing:.18em; text-transform:uppercase;">Merit Entertainment</b>
+        </div>
+        <p style="margin:0; line-height:1.65;" data-i18n="foot_desc">Kuzey Kıbrıs'ın en prestijli gala salonlarında dünya standartlarında sahne prodüksiyonları ve unutulmaz konser geceleri.</p>
+      </div>
+      <div class="foot-col">
+        <h4 data-i18n="foot_explore">Keşfet</h4>
+        <ul>
+          <li><a href="merit-bilet.html" data-i18n="nav_home">Ana Sayfa</a></li>
+          <li><a href="yaklasan.html" data-i18n="nav_upcoming">Yaklaşan Etkinlikler</a></li>
+          <li><a href="takvim.html" data-i18n="nav_calendar">Etkinlik Takvimi</a></li>
+          <li><a href="biletim.html" data-i18n="nav_tickets">Biletim (PNR)</a></li>
+          <li><a href="kurumsal.html" data-i18n="nav_corp">Hakkımızda</a></li>
+          <li><a href="sss.html" data-i18n="nav_faq">Sık Sorulan Sorular</a></li>
+          <li><a href="iade.html" data-i18n="nav_refund">İade Koşulları</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4 data-i18n="foot_contact">İletişim</h4>
+        <ul>
+          <li>Merit Royal Diamond Hotel &amp; Spa</li>
+          <li>Alsancak, Girne / KKTC</li>
+          <li>+90 392 650 40 00</li>
+          <li>entertainment@merithotels.com</li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4 data-i18n="foot_social">Sosyal Medya</h4>
+        <ul>
+          <li><a href="https://www.instagram.com/merit.entertainment/" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px; margin-right:8px; color:var(--gold-bright);"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>@merit.entertainment</a></li>
+          <li><a href="https://www.facebook.com/meritentertainment/" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px; margin-right:8px; color:var(--gold-bright);"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>/meritentertainment</a></li>
+          <li><a href="https://www.merithotels.com/konserler" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px; margin-right:8px; color:var(--gold-bright);"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>merithotels.com/konserler</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span data-i18n="foot_rights">© 2026 Merit Entertainment. Tüm hakları saklıdır.</span>
+    </div>
+  </div>
+</footer>
+
+<dialog class="modal" id="guestModal" aria-labelledby="guestModalTitle">
+  <div class="modal-head">
+    <h3 id="guestModalTitle">Kaç Kişilik Bilet Alacaksınız?</h3>
+    <button type="button" class="icon-close" id="closeGuestModal" aria-label="Kapat">×</button>
+  </div>
+  <div class="modal-body">
+    <div style="font-size:13.5px; color:var(--muted);" id="guestEventInfo"></div>
+    <div class="guest-grid" id="guestGrid"></div>
+    <button type="button" class="btn btn-primary" id="btnGoSalon" style="width:100%;">Masa Seçimine Geç →</button>
+  </div>
+</dialog>
+
+<script type="module">
+import { t, applyI18n } from './i18n.js';
+import { EVENTS, getEventById } from './data.js';
+
+// Hero Rotation starting with Levent Yüksel!
+const heroList = [
+  getEventById('levent'),
+  getEventById('serkan'),
+  getEventById('ziynet-diamond'),
+  getEventById('selcuk')
+];
+let hIdx = 0;
+const dotsWrap = document.getElementById('heroDots');
+dotsWrap.innerHTML = heroList.map((e, i) => `<button type="button" class="${i === 0 ? 'active' : ''}" data-i="${i}" aria-label="${e.artist}"></button>`).join('');
+
+function renderHero(i) {
+  hIdx = i;
+  const ev = heroList[i];
+  document.getElementById('heroEyebrow').textContent = `${ev.date.split('·')[0].trim()} · Saat ${ev.time}`;
+  document.getElementById('heroTitle').innerHTML = `${ev.artist}<br><em>${ev.sub.split('·')[0].trim()}</em>`;
+  document.getElementById('heroDate').textContent = ev.date;
+  document.getElementById('heroTime').textContent = `${ev.time} (Kapı ${ev.doors})`;
+  document.getElementById('heroCapSub').textContent = ev.sub;
+  document.getElementById('heroPrice').textContent = `₺${ev.price.toLocaleString('tr-TR')}`;
+  document.getElementById('heroBuyBtn').dataset.buy = ev.id;
+  document.getElementById('heroDetailBtn').href = `etkinlik.html?id=${ev.id}`;
+  const v = document.getElementById('heroVideo');
+  v.poster = ev.poster || ev.img;
+  v.src = ev.video;
+  v.play().catch(() => {});
+  dotsWrap.querySelectorAll('button').forEach((b, k) => b.classList.toggle('active', k === i));
+}
+dotsWrap.querySelectorAll('button').forEach(b => b.addEventListener('click', () => renderHero(Number(b.dataset.i))));
+renderHero(0);
+setInterval(() => renderHero((hIdx + 1) % heroList.length), 7000);
+
+// Gelecek Organizasyonlar (Ultra-lightweight WebP poster + lazy-loaded WebM loops)
+const futureEvents = [
+  getEventById('levent'),
+  getEventById('serkan'),
+  getEventById('ziynet-diamond'),
+  getEventById('buray'),
+  getEventById('kirac')
+];
+// Lazy-load WebM loops only when scrolled into view (zero initial-load lag)
+const videoObs = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const vid = entry.target;
+    if (entry.isIntersecting) {
+      if (!vid.src && vid.dataset.src) {
+        vid.src = vid.dataset.src;
+      }
+      vid.play().catch(() => {});
+    } else if (vid.src) {
+      vid.pause();
+    }
+  });
+}, { rootMargin: '120px' });
+
+function renderReels() {
+  document.getElementById('reelsGrid').innerHTML = futureEvents.map(ev => `
+  <div class="reel-card">
+    <video muted loop playsinline preload="none" poster="${ev.poster || ev.img}" data-src="${ev.video}"></video>
+    <div class="reel-cap">
+      <span>${ev.date.split('·')[0].trim()} · ${ev.time}</span>
+      <b>${ev.artist}</b>
+      <button type="button" class="btn btn-primary" style="margin-top:10px; padding:7px 14px; font-size:12px; width:100%;" data-buy="${ev.id}">${t('btn_buy')}</button>
+    </div>
+  </div>
+`).join('');
+  document.querySelectorAll('#reelsGrid video').forEach(v => videoObs.observe(v));
+}
+window.addEventListener('merit:langchange', renderReels);
+applyI18n();
+renderReels();
+
+// Guest Count Modal
+const guestModal = document.getElementById('guestModal');
+let chosenEventId = 'levent', chosenGuests = 2;
+const guestGrid = document.getElementById('guestGrid');
+[1,2,3,4,5,6,8,12].forEach(n => {
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'guest-btn'; b.textContent = `${n} Kişi`;
+  b.setAttribute('aria-pressed', n === 2 ? 'true' : 'false');
+  b.addEventListener('click', () => {
+    chosenGuests = n;
+    guestGrid.querySelectorAll('.guest-btn').forEach(x => x.setAttribute('aria-pressed', 'false'));
+    b.setAttribute('aria-pressed', 'true');
+  });
+  guestGrid.appendChild(b);
+});
+
+function openGuestPicker(evId) {
+  chosenEventId = evId;
+  const ev = getEventById(evId);
+  document.getElementById('guestEventInfo').textContent = `${ev.artist} · ${ev.date} · Saat ${ev.time}`;
+  guestModal.showModal();
+}
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-buy]');
+  if (btn) openGuestPicker(btn.dataset.buy);
+});
+document.getElementById('navBuyBtn').addEventListener('click', () => openGuestPicker(heroList[hIdx].id));
+document.getElementById('closeGuestModal').addEventListener('click', () => guestModal.close());
+document.getElementById('btnGoSalon').addEventListener('click', () => {
+  window.location.href = `salon.html?event=${encodeURIComponent(chosenEventId)}&guests=${chosenGuests}`;
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Merit Royal Etkinlik Sistemi · Proje Tanıtımı</title>
+<style>
+  :root {
+    --bg: #f8f5ee; --paper: #ffffff; --ink: #1b2030; --muted: #666d80; --line: #e6dece; --tint: #f1ebdd;
+    --gold: #a47b28; --gold-soft: #efe2c2; --teal: #1d7d71; --rose: #a5304a; --blue: #2e5da6; --violet: #5b4a9a; --slate: #a3a8b5;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-snap-type: y proximity; scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .pulse { animation: none !important; } }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+
+  /* Üst şerit */
+  .bar { position: fixed; inset: 0 0 auto 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; padding: 12px 22px; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .bar b { color: var(--ink); font-weight: 600; }
+  .bar .count { font-variant-numeric: tabular-nums; letter-spacing: .12em; }
+  .progress { position: fixed; top: 0; left: 0; height: 2px; background: var(--gold); z-index: 11; width: 0; transition: width .3s; }
+
+  section { min-height: 100vh; min-height: 100svh; scroll-snap-align: start; position: relative; display: flex; align-items: center; padding: 84px 22px 64px; border-bottom: 1px solid var(--line); }
+  section:nth-of-type(even) { background: linear-gradient(180deg, #fbf9f4, var(--bg)); }
+  .in { width: 100%; max-width: 1080px; margin: 0 auto; }
+  .split { display: grid; gap: 48px; grid-template-columns: 1fr 1fr; align-items: center; }
+  @media (max-width: 860px) { .split { grid-template-columns: 1fr; gap: 30px; } }
+
+  .eyebrow { display: flex; align-items: center; gap: 12px; color: var(--a, var(--gold)); font-size: 11.5px; letter-spacing: .24em; text-transform: uppercase; margin-bottom: 16px; font-weight: 600; }
+  .eyebrow::before { content: ""; width: 34px; height: 1px; background: currentColor; }
+  h1, h2 { font-family: var(--serif); font-weight: 500; letter-spacing: -.015em; margin: 0; text-wrap: balance; }
+  h1 { font-size: clamp(40px, 8.4vw, 78px); line-height: 1.03; }
+  h2 { font-size: clamp(29px, 5.6vw, 46px); line-height: 1.1; }
+  h1 em, h2 em { font-style: italic; color: var(--a, var(--gold)); }
+  .lead { color: var(--muted); font-size: clamp(16px, 2.3vw, 18.5px); max-width: 54ch; margin: 18px 0 0; }
+
+  ul.points { list-style: none; padding: 0; margin: 26px 0 0; display: grid; gap: 14px; }
+  ul.points li { display: grid; grid-template-columns: 22px 1fr; gap: 12px; }
+  ul.points li::before { content: ""; width: 8px; height: 8px; margin-top: 9px; transform: rotate(45deg); background: var(--a, var(--gold)); justify-self: center; }
+  ul.points b { display: block; font-weight: 600; } ul.points span { color: var(--muted); font-size: 15px; }
+
+  figure { margin: 0; background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 20px; box-shadow: 0 34px 70px -48px rgba(70, 50, 10, .45); }
+  figure svg { display: block; width: 100%; height: auto; }
+  @media (max-width: 560px) { figure { padding: 12px; } }
+  figcaption { text-align: center; color: var(--muted); font-size: 12.5px; margin-top: 12px; letter-spacing: .02em; }
+  .legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; margin-top: 14px; font-size: 12.5px; color: var(--muted); }
+  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; background: var(--c); border: 1.5px solid var(--c); }
+  .legend i.o { background: transparent; }
+
+  /* Kapak */
+  .cover { background: radial-gradient(1200px 600px at 85% 20%, #fffdf8, transparent), var(--bg); }
+  .tilt { perspective: 1100px; }
+  .tilt figure { transform: rotateX(38deg) rotateZ(-9deg); transform-origin: 50% 60%; border-color: var(--gold-soft); box-shadow: 0 60px 80px -50px rgba(70, 50, 10, .55); }
+  .orn { display: flex; align-items: center; gap: 14px; margin-top: 30px; color: var(--gold); font-size: 12px; letter-spacing: .22em; text-transform: uppercase; }
+  .orn::before, .orn::after { content: ""; height: 1px; width: 44px; background: var(--gold); }
+  .hint { position: absolute; bottom: 20px; left: 0; right: 0; text-align: center; color: var(--muted); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; }
+
+  /* Rakamlar */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 40px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .stats div { padding: 22px 18px; border-left: 1px solid var(--line); }
+  .stats div:first-child { border-left: 0; padding-left: 0; }
+  .stats b { display: block; font: 500 clamp(32px, 7vw, 56px)/1 var(--serif); color: var(--gold); }
+  .stats span { color: var(--muted); font-size: 14px; }
+  @media (max-width: 560px) { .stats { grid-template-columns: 1fr; } .stats div { border-left: 0; border-top: 1px solid var(--line); padding-left: 0; } .stats div:first-child { border-top: 0; } }
+
+  /* Zincir diyagramı (adımlar, fiyat akışı) */
+  .chain { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 0; margin-top: 40px; counter-reset: n; }
+  .chain > div { position: relative; padding: 46px 14px 0 0; counter-increment: n; }
+  .chain > div::before { content: counter(n, decimal-leading-zero); position: absolute; top: 0; left: 0; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--paper); border: 1.5px solid var(--c, var(--gold)); color: var(--c, var(--gold)); font: 600 12px/1 "Segoe UI", sans-serif; z-index: 1; }
+  .chain > div::after { content: ""; position: absolute; top: 17px; left: 34px; right: 0; height: 1px; background: var(--line); }
+  .chain > div:last-child::after { display: none; }
+  .chain b { display: block; font: 500 20px/1.2 var(--serif); }
+  .chain span { display: block; color: var(--muted); font-size: 14px; margin-top: 4px; }
+  .chain small { display: block; margin-top: 10px; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--c, var(--gold)); font-weight: 600; }
+  @media (max-width: 900px) {
+    .chain { grid-auto-flow: row; }
+    .chain > div { padding: 0 0 22px 52px; min-height: 56px; }
+    .chain > div::after { top: 34px; bottom: 0; left: 17px; right: auto; width: 1px; height: auto; }
+  }
+
+  /* Dallanan akış (Casino) */
+  .branch { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; text-align: center; }
+  .node { background: var(--paper); border: 1px solid var(--line); border-top: 3px solid var(--c, var(--rose)); border-radius: 12px; padding: 12px 10px; font-size: 14px; }
+  .node b { display: block; font: 500 16.5px/1.25 var(--serif); }
+  .node span { color: var(--muted); font-size: 12.5px; }
+  .branch .full { grid-column: 1 / -1; justify-self: center; width: min(100%, 260px); }
+  .arrow { color: var(--slate); font-size: 18px; line-height: 1; }
+  .branch .fork { grid-column: 1 / -1; height: 22px; border: 1px solid var(--slate); border-bottom: 0; border-radius: 10px 10px 0 0; margin: 0 25%; position: relative; }
+  .branch .fork::before { content: ""; position: absolute; left: 50%; top: -12px; height: 12px; width: 1px; background: var(--slate); }
+  .tagline { font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+
+  /* Masa tipleri */
+  .tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .tier { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 14px 8px; text-align: center; }
+  .tier svg { width: 74px; height: 74px; }
+  .tier b { display: block; font: 500 17px/1.2 var(--serif); color: var(--c); margin-top: 4px; }
+  .tier span { color: var(--muted); font-size: 12px; }
+
+  /* Yetki şeması */
+  .org-top { text-align: center; background: var(--ink); color: #fff; border-radius: 12px; padding: 12px; font: 500 18px/1.2 var(--serif); }
+  .org-top small { display: block; font: 400 12px/1.4 "Segoe UI", sans-serif; opacity: .7; letter-spacing: .04em; }
+  .org-stem { width: 1px; height: 20px; background: var(--slate); margin: 0 auto; }
+  .org { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; border-top: 1px solid var(--slate); padding-top: 18px; }
+  .org > div { background: var(--paper); border: 1px solid var(--line); border-top: 3px solid var(--c); border-radius: 12px; padding: 12px; }
+  .org h3 { margin: 0 0 10px; font: 500 17px/1.2 var(--serif); color: var(--c); }
+  .org p { margin: 6px 0 0; padding: 7px 10px; border-radius: 8px; background: var(--tint); font-size: 13px; }
+  .org p:nth-of-type(1) { background: color-mix(in srgb, var(--c) 16%, #fff); font-weight: 600; }
+  .org p small { display: block; color: var(--muted); font-size: 11.5px; font-weight: 400; }
+  @media (max-width: 620px) { .org { grid-template-columns: 1fr; } }
+
+  /* Kartlar */
+  .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); margin-top: 30px; }
+  .card { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+  .card svg { width: 26px; height: 26px; color: var(--c, var(--gold)); margin-bottom: 10px; }
+  .card h3 { margin: 0 0 4px; font: 500 18px/1.25 var(--serif); }
+  .card p { margin: 0; color: var(--muted); font-size: 14.5px; }
+
+  /* Telefon maketleri */
+  .phones { display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; }
+  .phone { width: 214px; border: 1px solid var(--line); border-radius: 30px; padding: 14px 14px 18px; background: var(--paper); box-shadow: 0 40px 70px -46px rgba(70, 50, 10, .6), inset 0 0 0 5px #f4efe4; }
+  .phone::before { content: ""; display: block; width: 50px; height: 5px; border-radius: 3px; background: var(--line); margin: 2px auto 14px; }
+  .phone h4 { margin: 0; font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; }
+  .phone h4 span { color: var(--gold); }
+  .tk-name { font: 500 20px/1.2 var(--serif); margin: 8px 0 10px; }
+  .tk-row { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--muted); padding: 6px 0; border-top: 1px dashed var(--line); }
+  .tk-row b { color: var(--ink); font-weight: 600; }
+  .qr { width: 112px; height: 112px; margin: 12px auto 2px; display: grid; grid-template-columns: repeat(13, 1fr); gap: 1px; }
+  .qr i { background: var(--ink); border-radius: 1px; } .qr i.o { background: transparent; }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+  @keyframes pulse { 50% { transform: scale(2.1); opacity: .15; } }
+
+  .close { text-align: center; }
+  .close .lead { margin-inline: auto; }
+  .close .orn { justify-content: center; }
+  .ticket-demo-link { display:inline-block; margin-top:22px; padding:10px 17px; border:1px solid var(--gold); border-radius:4px; color:var(--gold); font-weight:700; text-decoration:none; }
+  .ticket-demo-link:focus-visible, .ticket-demo-link:hover { outline:2px solid var(--gold); outline-offset:4px; }
+
+  @media print { html { scroll-snap-type: none; } section { min-height: auto; page-break-after: always; } .bar, .progress, .hint { display: none; } .tilt figure { transform: none; } }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="bar"><span><b>Merit Royal</b> · Etkinlik Sistemi</span><span class="count" id="count"></span></div>
+
+<!-- 1. Kapak -->
+<section id="t1" class="cover">
+  <div class="in split">
+    <div>
+      <div class="eyebrow">Proje tanıtımı</div>
+      <h1>Sahneden masaya,<br><em>tek sistem.</em></h1>
+      <p class="lead">Bir organizasyonun planlanması, bilet satışı, misafirin karşılanması ve gecenin değerlendirilmesi: hepsi aynı salon planı üzerinde, anlık.</p>
+      <div class="orn">Entertainment · Food &amp; Beverage · Casino</div>
+      <a class="ticket-demo-link" href="merit-bilet.html">Bilet satış demosunu aç ↗</a>
+    </div>
+    <div class="tilt"><figure id="heroPlan" role="img" aria-label="Salon planı görseli"></figure></div>
+  </div>
+  <div class="hint">Kaydırın ↓</div>
+</section>
+
+<!-- 2. İhtiyaç -->
+<section id="t2">
+  <div class="in">
+    <div class="eyebrow">İhtiyaç</div>
+    <h2>Büyük bir salon, tek bir gece,<br><em>üç ayrı ekip.</em></h2>
+    <p class="lead">Entertainment geceyi kurgular, Food &amp; Beverage salonu ve hizmeti hazırlar, Casino özel misafirlerini ağırlar. Hepsi aynı masalar üzerinde çalışır; bu yüzden hepsinin aynı plana bakması gerekir.</p>
+    <div class="stats">
+      <div><b>2000+</b><span>misafir ağırlayabilen salon</span></div>
+      <div><b>3</b><span>departman, tek ortak plan</span></div>
+      <div><b>Anlık</b><span>her satış ve rezervasyon tüm ekranlarda</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Ekosistem diyagramı -->
+<section id="t3">
+  <div class="in split">
+    <div>
+      <div class="eyebrow">Sistemin yapısı</div>
+      <h2>Merkezde <em>ortak salon planı</em></h2>
+      <p class="lead">Her ekip kendi modülünde çalışır, ama hepsi aynı plana bağlıdır. Bir modülde yapılan değişiklik diğerlerinde kendiliğinden görünür.</p>
+      <ul class="points">
+        <li><div><b>Üç departman modülü</b><span>Entertainment, Food &amp; Beverage ve Casino.</span></div></li>
+        <li><div><b>Kapı ve misafir tarafı</b><span>Check-in modülü ve ayrı bir bilet satış sitesi.</span></div></li>
+        <li><div><b>Tek yönetim noktası</b><span>Kullanıcılar ve yetkiler Sistem Yönetimi'nden.</span></div></li>
+      </ul>
+    </div>
+    <figure><div id="hub" role="img" aria-label="Diyagram: ortak salon planı merkezde; Entertainment, Food and Beverage, Casino, Check-in, bilet satış sitesi ve Sistem Yönetimi ona bağlı"></div><figcaption>Tüm modüller aynı plana anlık bağlıdır</figcaption></figure>
+  </div>
+</section>
+
+<!-- 4. Akış -->
+<section id="t4">
+  <div class="in">
+    <div class="eyebrow">Nasıl çalışır</div>
+    <h2>Altı adımda bir organizasyon</h2>
+    <div class="chain">
+      <div style="--c:var(--gold)"><b>Tanımla</b><span>Tarih, saat, sanatçı ve organizasyon tipi.</span><small>Entertainment</small></div>
+      <div style="--c:var(--teal)"><b>Kur</b><span>Salon düzeni, masalar ve hizmet ekibi.</span><small>Food &amp; Beverage</small></div>
+      <div style="--c:var(--rose)"><b>Ayır</b><span>Özel misafirler için masalar ayrılır.</span><small>Casino</small></div>
+      <div style="--c:var(--blue)"><b>Sat</b><span>Kalan masalar online satışa açılır.</span><small>Entertainment</small></div>
+      <div style="--c:var(--violet)"><b>Ağırla</b><span>Kapıda giriş; misafir masasını bulur.</span><small>Check-in</small></div>
+      <div style="--c:var(--gold)"><b>Değerlendir</b><span>Gelir, gider ve personel arşive girer.</span><small>Entertainment · F&amp;B</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Canlı plan -->
+<section id="t5" style="--a:var(--blue)">
+  <div class="in split">
+    <div>
+      <div class="eyebrow">Canlı salon planı</div>
+      <h2>Her sandalye <em>anlık</em> görünür</h2>
+      <p class="lead">Bir bilet satıldığında, bir masa ayrıldığında ya da rezerve edildiğinde plan tüm departmanlarda ve satış sitesinde kendiliğinden güncellenir.</p>
+      <ul class="points">
+        <li><div><b>Sandalye bazında doluluk</b><span>Her masada kaç sandalyenin satıldığı tek bakışta okunur.</span></div></li>
+        <li><div><b>Çifte satış olmaz</b><span>Bir masa aynı anda hem Casino'da hem satışta bulunamaz.</span></div></li>
+        <li><div><b>Korunan yerleşim</b><span>Satış başladıktan sonra satılmış ya da ayrılmış masaların düzeni değiştirilemez.</span></div></li>
+      </ul>
+    </div>
+    <figure>
+      <div id="livePlan" role="img" aria-label="Örnek salon planı: sahne, sandalyeleriyle masalar, localar ve üç giriş kapısı"></div>
+      <div class="legend">
+        <span><i style="--c:var(--gold)"></i>VIP</span><span><i style="--c:var(--rose)"></i>Casino</span><span><i style="--c:var(--blue)"></i>Satışta</span><span><i style="--c:var(--slate)"></i>Tükendi</span><span><i class="o" style="--c:var(--blue)"></i>Boş sandalye</span>
+      </div>
+      <figcaption>Örnek gösterim</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 6. Entertainment -->
+<section id="t6">
+  <div class="in split">
+    <div>
+      <div class="eyebrow">Entertainment</div>
+      <h2>Geceyi <em>kurgulayan</em> ekip için</h2>
+      <ul class="points">
+        <li><div><b>Masaları sınıflandırın</b><span>Sahne önündeki sıraları VIP, diğerlerini Premium ya da Standart yapın.</span></div></li>
+        <li><div><b>Sandalyeyi siz belirleyin</b><span>Masalardan toplu ya da tek tek sandalye eksiltin.</span></div></li>
+        <li><div><b>Tavsiye fiyatla başlayın</b><span>Tahmini giderleri girin; sistem masa tipine göre bilet fiyatı önersin. Son sözü siz söylersiniz.</span></div></li>
+        <li><div><b>Satışı siz yönetin</b><span>İstediğiniz an açın ya da kapatın; kuralları organizasyona göre ayarlayın.</span></div></li>
+      </ul>
+    </div>
+    <div>
+      <div class="tiers" id="tiers"></div>
+      <div class="chain" style="margin-top:28px">
+        <div><b>Gider</b><span>Tahmini giderler girilir.</span></div>
+        <div><b>Öneri</b><span>Sistem fiyat önerir.</span></div>
+        <div><b>Karar</b><span>Fiyat kesinleşir.</span></div>
+        <div style="--c:var(--blue)"><b>Satış</b><span>Satışa açılır.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. F&B -->
+<section id="t7" style="--a:var(--teal)">
+  <div class="in split">
+    <div>
+      <div class="eyebrow">Food &amp; Beverage</div>
+      <h2>Salonu ve hizmeti <em>hazırlayan</em> ekip için</h2>
+      <ul class="points">
+        <li><div><b>Salon düzenini çizin</b><span>Masalar, localar ve servis noktaları; hazır şablonlarla.</span></div></li>
+        <li><div><b>Hizmet zincirini kurun</b><span>Personeli masalara, masa gruplarını süpervizörlere, süpervizörleri kaptanlara bağlayın.</span></div></li>
+        <li><div><b>Bar ve localar da planın içinde</b><span>Servis noktası ve loca personeli ayrıca atanır.</span></div></li>
+        <li><div><b>Gece bitince kısa değerlendirme</b><span>Şef, süpervizör ve kaptanlar personeli değerlendirir; sonraki organizasyonda bu bilgi elinizde olur.</span></div></li>
+      </ul>
+    </div>
+    <figure><div id="tree" role="img" aria-label="Diyagram: kaptan iki süpervizöre, her süpervizör hizmet personeline, personel masalara bağlı"></div><figcaption>Hizmet hiyerarşisi</figcaption></figure>
+  </div>
+</section>
+
+<!-- 8. Casino -->
+<section id="t8" style="--a:var(--rose)">
+  <div class="in split">
+    <div>
+      <div class="eyebrow">Casino</div>
+      <h2>Özel misafirlerini <em>ağırlayan</em> ekip için</h2>
+      <ul class="points">
+        <li><div><b>Masalarınızı önceden ayırın</b><span>Plandan seçtiğiniz masalar satışa kapanır, size kalır.</span></div></li>
+        <li><div><b>Misafir adına rezervasyon</b><span>Ayırdığınız masalara dilediğiniz zaman rezervasyon oluşturun.</span></div></li>
+        <li><div><b>Kullanmadığınızı geri verin</b><span>Etkinlik yaklaşırken boş kalan masaları serbest bırakın.</span></div></li>
+        <li><div><b>Misafiri masasına ulaştırın</b><span>Ad soyad ya da rezervasyon numarasıyla masayı anında bulun.</span></div></li>
+      </ul>
+    </div>
+    <figure>
+      <div class="branch">
+        <div class="node full"><b>Masa ayrılır</b><span>Satışa kapanır</span></div>
+        <div class="fork"></div>
+        <div class="tagline">Misafir varsa</div><div class="tagline">Kullanılmazsa</div>
+        <div class="node"><b>Rezervasyon</b><span>Misafir adına</span></div>
+        <div class="node" style="--c:var(--slate)"><b>Serbest bırakılır</b><span>Casino geri verir</span></div>
+        <div class="arrow">↓</div><div class="arrow">↓</div>
+        <div class="node"><b>Misafir ağırlanır</b><span>Masasına ulaştırılır</span></div>
+        <div class="node" style="--c:var(--blue)"><b>Satışa açılır</b><span>Entertainment isterse</span></div>
+      </div>
+      <figcaption>Ayrılan bir masanın iki yolu</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 9. Misafir -->
+<section id="t9" style="--a:var(--blue)">
+  <div class="in split">
+    <div>
+      <div class="eyebrow">Misafir deneyimi</div>
+      <h2>Biletten masaya <em>üç dokunuş</em></h2>
+      <ul class="points">
+        <li><div><b>Online bilet</b><span>Salon planından masasını seçer, kişi sayısı kadar bilet alır.</span></div></li>
+        <li><div><b>Kapıda hızlı giriş</b><span>QR kod, PNR ya da ad soyad ile.</span></div></li>
+        <li><div><b>Masamı bul</b><span>Salon girişindeki QR'ı okutur; telefonunda salonun 3B krokisinde masası gösterilir.</span></div></li>
+      </ul>
+    </div>
+    <div class="phones">
+      <div class="phone">
+        <h4>E-bilet <span>Örnek</span></h4>
+        <div class="tk-name">Gala Gecesi</div>
+        <div class="tk-row">Masa <b>16 · Premium</b></div>
+        <div class="tk-row">Kişi <b>3</b></div>
+        <div class="tk-row">PNR <b>MR7K2Q</b></div>
+        <div class="qr" id="qr" aria-hidden="true"></div>
+      </div>
+      <div class="phone">
+        <h4>Masamı bul <span>Örnek</span></h4>
+        <div class="tk-name">Masa 16</div>
+        <div id="findPlan"></div>
+        <div class="tk-row" style="margin-top:8px">En yakın giriş <b>Kapı 3</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10. Arşiv -->
+<section id="t10">
+  <div class="in split">
+    <div>
+      <div class="eyebrow">Gece bittikten sonra</div>
+      <h2>Her organizasyon bir sonrakine <em>yol gösterir</em></h2>
+      <p class="lead">Organizasyon tamamlandığında veriler arşive alınır ve istenildiği zaman ayrıntılı raporlanır.</p>
+      <ul class="points">
+        <li><div><b>Gelir ve gider</b><span>Bilet geliri, sanatçı ücreti, organizasyon giderleri; tahmini ve gerçekleşen.</span></div></li>
+        <li><div><b>Satış ve katılım</b><span>Satılan bilet, giriş yapan misafir, doluluk oranı.</span></div></li>
+        <li><div><b>Casino ve hizmet ekibi</b><span>Ayrılan masa sayıları, görev alan personel ve değerlendirmeler.</span></div></li>
+      </ul>
+    </div>
+    <figure><div id="chart" role="img" aria-label="Örnek grafik: dört organizasyonun gelir ve gider karşılaştırması"></div>
+      <div class="legend"><span><i style="--c:var(--gold)"></i>Gelir</span><span><i style="--c:var(--slate)"></i>Gider</span></div>
+      <figcaption>Örnek gösterim; gerçek veri değildir</figcaption></figure>
+  </div>
+</section>
+
+<!-- 11. Yetki -->
+<section id="t11" style="--a:var(--violet)">
+  <div class="in split">
+    <div>
+      <div class="eyebrow">Yetki ve güven</div>
+      <h2>Herkes <em>kendi alanında</em></h2>
+      <p class="lead">Her departmanın bir yöneticisi ve yönetici asistanı vardır. Kullanıcılar modül modül yetkilendirilir ya da kısıtlanır.</p>
+      <ul class="points">
+        <li><div><b>Tek merkezden yönetim</b><span>Tüm atamalar Sistem Yönetimi modülünden yapılır.</span></div></li>
+        <li><div><b>Ayrı misafir kayıtları</b><span>Casino misafirleri ile online bilet alıcıları ayrı tutulur.</span></div></li>
+      </ul>
+    </div>
+    <div>
+      <div class="org-top">Sistem Yönetimi<small>Departmanlar · kullanıcılar · yetkiler</small></div>
+      <div class="org-stem"></div>
+      <div class="org">
+        <div style="--c:var(--gold)"><h3>Entertainment</h3><p>Yönetici</p><p>Yönetici Asistanı</p><p>Kullanıcılar<small>modül bazında yetki</small></p></div>
+        <div style="--c:var(--teal)"><h3>Food &amp; Beverage</h3><p>Yönetici</p><p>Yönetici Asistanı</p><p>Kullanıcılar<small>modül bazında yetki</small></p></div>
+        <div style="--c:var(--rose)"><h3>Casino</h3><p>Yönetici</p><p>Yönetici Asistanı</p><p>Kullanıcılar<small>modül bazında yetki</small></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 12. Kapanış -->
+<section id="t12" class="cover">
+  <div class="in close">
+    <div class="orn">Özet</div>
+    <h1 style="margin-top:22px">Planlama, satış ve karşılama<br><em>tek ekranda.</em></h1>
+    <p class="lead">İlk aşamada sistem Türkçe olarak ve demo ödeme altyapısıyla devreye alınacak; bilet satışı ayrı bir site üzerinden yapılacak.</p>
+    <div class="grid" style="text-align:left">
+      <div class="card" style="--c:var(--gold)" data-ic="star"><h3>Entertainment</h3><p>Kurgu, fiyat, satış ve arşiv.</p></div>
+      <div class="card" style="--c:var(--teal)" data-ic="glass"><h3>Food &amp; Beverage</h3><p>Salon düzeni ve hizmet ekibi.</p></div>
+      <div class="card" style="--c:var(--rose)" data-ic="diamond"><h3>Casino</h3><p>Masa ayırma ve özel misafirler.</p></div>
+      <div class="card" style="--c:var(--blue)" data-ic="ticket"><h3>Misafir</h3><p>Online bilet, hızlı giriş, masamı bul.</p></div>
+    </div>
+  </div>
+</section>
+
+<script>
+const V = (n) => `var(--${n})`;
+// Tekrarlanabilir sözde rastgele sayı: sunum her açılışta aynı görünür.
+function rng(seed) { return () => (seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296; }
+
+const ICONS = {
+  star: '<path d="M12 3l2.6 5.6 6 .8-4.4 4.2 1.1 6-5.3-3-5.3 3 1.1-6L3.4 9.4l6-.8z"/>',
+  glass: '<path d="M7 3h10l-1 6a4 4 0 0 1-8 0zM12 13v7M8 21h8"/>',
+  diamond: '<path d="M12 3l8 9-8 9-8-9z"/>',
+  qr: '<path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h3v3h-3zM20 17v3h-3"/>',
+  ticket: '<path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v8a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2zM14 7v10" />',
+  shield: '<path d="M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6z"/>',
+};
+const icon = (name, x = 0, y = 0, size = 24, color = "currentColor") =>
+  `<svg x="${x}" y="${y}" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]}</svg>`;
+document.querySelectorAll("[data-ic]").forEach((el) => el.insertAdjacentHTML("afterbegin", icon(el.dataset.ic)));
+
+/** Sandalyeleriyle bir masa: `filled` kadar sandalye dolu çizilir. */
+function table(cx, cy, r, seats, filled, color, label = "", opacity = 1) {
+  let s = `<g opacity="${opacity}"><circle cx="${cx}" cy="${cy}" r="${r}" fill="#fff" stroke="${color}" stroke-width="1.6"/>`;
+  for (let i = 0; i < seats; i++) {
+    const a = (i / seats) * Math.PI * 2 - Math.PI / 2, d = r + r * 0.42;
+    s += `<circle cx="${(cx + Math.cos(a) * d).toFixed(1)}" cy="${(cy + Math.sin(a) * d).toFixed(1)}" r="${(r * 0.21).toFixed(1)}" fill="${i < filled ? color : "#fff"}" stroke="${color}" stroke-width="1.1"/>`;
+  }
+  if (label) s += `<text x="${cx}" y="${cy + r * 0.27}" text-anchor="middle" font-size="${r * 0.72}" fill="${color}" font-weight="600">${label}</text>`;
+  return s + "</g>";
+}
+
+/** Örnek salon planı. `focus: [sütun, satır]` verilirse o masa vurgulanır. */
+function plan({ cols, rows, focus = null, labels = true, doors = true }) {
+  const rand = rng(11), gap = 62, padX = 60, top = 96, r = 15;
+  const W = padX * 2 + (cols - 1) * gap, H = top + (rows - 1) * gap + (doors ? 62 : 34);
+  const mid = Math.floor(cols / 2);
+  let s = `<svg viewBox="0 0 ${W} ${H}" font-family="Segoe UI, system-ui, sans-serif">
+    <path d="M${W / 2 - 120} 18 h240 v20 q-120 26 -240 0z" fill="${V("tint")}" stroke="${V("gold")}" stroke-width="1.2"/>
+    <text x="${W / 2}" y="35" text-anchor="middle" font-size="11" letter-spacing="4" fill="${V("gold")}">SAHNE</text>`;
+  for (let row = 0; row < rows; row++) {
+    for (const x of [8, W - 30]) s += `<rect x="${x}" y="${top + row * gap - 13}" width="22" height="26" rx="5" fill="#fff" stroke="${V("rose")}" stroke-width="1.4" opacity="${focus ? 0.25 : 1}"/>`;
+    for (let c = 0; c < cols; c++) {
+      const sold = Math.floor(rand() * 9);
+      let color = V("blue"), filled = sold;
+      if (row === 0) { color = V("gold"); filled = 5 + (sold % 4); }
+      else if (row === 1 && (c === mid - 1 || c === mid)) { color = V("rose"); filled = 8; }
+      else if (sold === 8) color = V("slate");
+      const x = padX + c * gap, y = top + row * gap, hit = focus && focus[0] === c && focus[1] === row;
+      if (hit) s += `<circle class="pulse" cx="${x}" cy="${y}" r="${r + 9}" fill="${V("gold")}"/>` + table(x, y, r, 8, 8, V("gold"), labels ? row * cols + c + 1 : "");
+      else s += table(x, y, r, 8, filled, color, labels ? row * cols + c + 1 : "", focus ? 0.28 : 1);
+    }
+  }
+  if (doors) [0.2, 0.5, 0.8].forEach((f, i) => {
+    s += `<rect x="${W * f - 20}" y="${H - 24}" width="40" height="4" rx="2" fill="${V("gold")}"/><text x="${W * f}" y="${H - 6}" text-anchor="middle" font-size="9.5" letter-spacing="1" fill="${V("muted")}">KAPI ${i + 1}</text>`;
+  });
+  return s + "</svg>";
+}
+document.getElementById("heroPlan").innerHTML = plan({ cols: 7, rows: 5, labels: false });
+document.getElementById("livePlan").innerHTML = plan({ cols: 6, rows: 5 });
+document.getElementById("findPlan").innerHTML = plan({ cols: 4, rows: 4, focus: [3, 3], doors: true });
+
+// Masa tipleri
+document.getElementById("tiers").innerHTML = [["VIP", "gold", "Sahne önü", 6], ["Premium", "violet", "Orta sıralar", 5], ["Standart", "blue", "Genel alan", 3]]
+  .map(([name, c, sub, f]) => `<div class="tier" style="--c:${V(c)}"><svg viewBox="0 0 74 74">${table(37, 37, 20, 8, f, V(c))}</svg><b>${name}</b><span>${sub}</span></div>`).join("");
+
+// Ekosistem diyagramı
+(function hub() {
+  const nodes = [["Entertainment", "star", "gold"], ["Food & Beverage", "glass", "teal"], ["Casino", "diamond", "rose"], ["Check-in", "qr", "violet"], ["Bilet satış sitesi", "ticket", "blue"], ["Sistem Yönetimi", "shield", "ink"]];
+  const cx = 190, cy = 186, R = 132;
+  let s = `<svg viewBox="0 0 380 392" font-family="Segoe UI, system-ui, sans-serif"><circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${V("line")}" stroke-dasharray="2 6"/>`;
+  const pts = nodes.map((_, i) => { const a = (i / nodes.length) * Math.PI * 2 - Math.PI / 2; return [cx + Math.cos(a) * R, cy + Math.sin(a) * R]; });
+  pts.forEach(([x, y], i) => { s += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="${V(nodes[i][2])}" stroke-width="1.2" opacity=".55"/>`; });
+  s += `<circle cx="${cx}" cy="${cy}" r="58" fill="${V("gold-soft")}" stroke="${V("gold")}" stroke-width="1.4"/>
+    <text x="${cx}" y="${cy - 4}" text-anchor="middle" font-family="Georgia, serif" font-size="17" fill="${V("ink")}">Ortak</text>
+    <text x="${cx}" y="${cy + 16}" text-anchor="middle" font-family="Georgia, serif" font-size="17" fill="${V("ink")}">salon planı</text>`;
+  pts.forEach(([x, y], i) => {
+    const [name, ic, c] = nodes[i];
+    s += `<circle cx="${x}" cy="${y}" r="27" fill="#fff" stroke="${V(c)}" stroke-width="1.5"/>${icon(ic, x - 12, y - 12, 24, V(c))}
+      <text x="${x}" y="${y + 43}" text-anchor="middle" font-size="13.5" font-weight="600" fill="${V("ink")}">${name.replace("&", "&amp;")}</text>`;
+  });
+  document.getElementById("hub").innerHTML = s + "</svg>";
+})();
+
+// Hizmet hiyerarşisi
+(function tree() {
+  const box = (x, y, w, t, c, bold) => `<rect x="${x - w / 2}" y="${y}" width="${w}" height="30" rx="8" fill="${bold ? V(c) : "#fff"}" stroke="${V(c)}" stroke-width="1.4"/><text x="${x}" y="${y + 19.5}" text-anchor="middle" font-size="12" font-weight="600" fill="${bold ? "#fff" : V("ink")}">${t}</text>`;
+  const link = (x1, y1, x2, y2) => `<path d="M${x1} ${y1} V${(y1 + y2) / 2} H${x2} V${y2}" fill="none" stroke="${V("slate")}" stroke-width="1.2"/>`;
+  let s = `<svg viewBox="0 0 380 286" font-family="Segoe UI, system-ui, sans-serif">`;
+  const sup = [98, 282], staff = [[52, 144], [236, 328]];
+  sup.forEach((x) => (s += link(190, 42, x, 84)));
+  sup.forEach((x, i) => staff[i].forEach((p) => {
+    s += link(x, 114, p, 156);
+    [-18, 0, 18].forEach((d) => { s += `<line x1="${p}" y1="186" x2="${p + d}" y2="226" stroke="${V("line")}" stroke-width="1.2"/>` + table(p + d, 236, 6.5, 6, 0, V("teal")); });
+  }));
+  s += box(190, 12, 104, "Kaptan", "teal", true);
+  sup.forEach((x) => (s += box(x, 84, 108, "Şef · Süpervizör", "teal")));
+  staff.flat().forEach((p) => (s += box(p, 156, 76, "Personel", "slate")));
+  s += `<text x="190" y="276" text-anchor="middle" font-size="11" letter-spacing="2" fill="${V("muted")}">MASALAR</text>`;
+  document.getElementById("tree").innerHTML = s + "</svg>";
+})();
+
+// Örnek gelir-gider grafiği (temsili değerler)
+(function chart() {
+  const data = [[62, 48], [78, 55], [70, 58], [94, 61]];
+  let s = `<svg viewBox="0 0 380 220" font-family="Segoe UI, system-ui, sans-serif">`;
+  [40, 90, 140].forEach((y) => (s += `<line x1="24" x2="366" y1="${y}" y2="${y}" stroke="${V("line")}" stroke-dasharray="2 5"/>`));
+  s += `<line x1="24" x2="366" y1="186" y2="186" stroke="${V("slate")}"/>`;
+  data.forEach(([a, b], i) => {
+    const x = 52 + i * 84;
+    s += `<rect x="${x}" y="${186 - a * 1.6}" width="24" height="${a * 1.6}" rx="3" fill="${V("gold")}"/><rect x="${x + 28}" y="${186 - b * 1.6}" width="24" height="${b * 1.6}" rx="3" fill="${V("slate")}"/>
+      <text x="${x + 26}" y="204" text-anchor="middle" font-size="11" fill="${V("muted")}">Org. ${i + 1}</text>`;
+  });
+  document.getElementById("chart").innerHTML = s + "</svg>";
+})();
+
+// Süsleme amaçlı QR görünümü (okunabilir bir kod değildir)
+const q = rng(42);
+document.getElementById("qr").innerHTML = Array.from({ length: 169 }, (_, i) => {
+  const x = i % 13, y = Math.floor(i / 13);
+  const corner = (x < 3 && y < 3) || (x > 9 && y < 3) || (x < 3 && y > 9);
+  return `<i class="${corner || q() > 0.5 ? "" : "o"}"></i>`;
+}).join("");
+
+// Gezinme
+const slides = [...document.querySelectorAll("section")];
+const count = document.getElementById("count"), progress = document.getElementById("progress");
+const pad = (n) => String(n).padStart(2, "0");
+let current = 0;
+function show(i) { current = i; count.textContent = `${pad(i + 1)} / ${pad(slides.length)}`; progress.style.width = `${((i + 1) / slides.length) * 100}%`; }
+show(0);
+// Ekranın orta şeridine giren slayt etkin sayılır.
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((e) => { if (e.isIntersecting) show(slides.indexOf(e.target)); });
+}, { rootMargin: "-45% 0px -45% 0px" });
+slides.forEach((s) => observer.observe(s));
+addEventListener("keydown", (e) => {
+  const step = ["ArrowDown", "ArrowRight", "PageDown", " "].includes(e.key) ? 1 : ["ArrowUp", "ArrowLeft", "PageUp"].includes(e.key) ? -1 : 0;
+  if (!step) return;
+  e.preventDefault();
+  slides[Math.max(0, Math.min(slides.length - 1, current + step))].scrollIntoView();
+});
+</script>
+</body>
+</html>

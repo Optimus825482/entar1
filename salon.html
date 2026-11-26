@@ -1,0 +1,1057 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Masa Seçimi · Merit Entertainment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08090d; --bg-elev: #11131a; --bg-card: #161923; --bg-glass: rgba(17, 19, 26, 0.88);
+    --ink: #f7f5f0; --muted: #a6aab8;
+    --line: rgba(212, 175, 55, 0.2); --line-soft: rgba(255, 255, 255, 0.08);
+    --gold: #d4af37; --gold-bright: #f0d068; --gold-dim: rgba(212, 175, 55, 0.14);
+    --ok: #34d399; --masa: #e5d8b8; --loca: #c99a3a; --sold: #5c6170;
+    --serif: "Cormorant Garamond", Georgia, serif;
+    --sans: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
+  :focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 2px; }
+
+  header.topbar {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 12px clamp(16px, 3vw, 36px);
+    background: rgba(8, 9, 13, 0.9); backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+  .brand-logo { width: 36px; height: 36px; }
+  .brand-text b { display: block; font-size: 13px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold-bright); }
+  .brand-text span { display: block; font-size: 10.5px; color: var(--muted); }
+
+  .event-pill {
+    display: flex; align-items: center; gap: 14px; font-size: 13px;
+    background: var(--bg-elev); border: 1px solid var(--line-soft); padding: 6px 14px; border-radius: 999px;
+  }
+  .event-pill b { color: var(--gold-bright); }
+  @media (max-width: 820px) { .event-pill { display: none; } }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 11px 20px; border-radius: 999px; font-weight: 700; font-size: 13.5px;
+    border: 1px solid transparent; cursor: pointer; text-decoration: none; font-family: inherit;
+    transition: background .16s, border-color .16s;
+  }
+  .btn-primary { background: var(--gold); color: #08090d; }
+  .btn-primary:hover:not(:disabled) { background: var(--gold-bright); }
+  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+  .btn-ghost:hover { background: var(--gold-dim); border-color: var(--gold); }
+
+  .wrap { width: 100%; max-width: 1400px; margin: 0 auto; padding: 20px clamp(14px, 3vw, 32px) 40px; }
+
+  .top-controls {
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;
+    margin-bottom: 16px;
+  }
+  .filter-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .chip {
+    background: var(--bg-elev); color: var(--muted); border: 1px solid var(--line-soft);
+    padding: 7px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 600;
+    cursor: pointer; display: inline-flex; align-items: center; gap: 7px; font-family: inherit;
+  }
+  .chip[aria-pressed="true"] { background: var(--gold-dim); color: var(--gold-bright); border-color: var(--gold); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+  .guest-stepper {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--bg-elev); border: 1px solid var(--line); padding: 5px 12px; border-radius: 999px; font-size: 13px;
+  }
+  .guest-stepper button {
+    width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--line-soft);
+    background: var(--bg-card); color: var(--ink); font-weight: 700; cursor: pointer;
+  }
+
+  .arena-layout { display: grid; grid-template-columns: 1fr 390px; gap: 18px; align-items: start; }
+  @media (max-width: 1060px) { .arena-layout { grid-template-columns: 1fr; } }
+
+  .viewport-card {
+    position: relative; background: #050609; border: 1px solid var(--line);
+    border-radius: 20px; overflow: hidden; height: 650px;
+  }
+  @media (max-width: 640px) { .viewport-card { height: 480px; } }
+  #canvas3d { width: 100%; height: 100%; display: block; cursor: grab; }
+  #canvas3d:active { cursor: grabbing; }
+
+  .cam-toolbar { position: absolute; top: 14px; left: 14px; z-index: 10; display: flex; flex-wrap: wrap; gap: 6px; }
+  .cam-btn {
+    background: var(--bg-glass); backdrop-filter: blur(8px); color: var(--ink);
+    border: 1px solid var(--line-soft); padding: 7px 12px; border-radius: 10px;
+    font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit;
+  }
+  .cam-btn[aria-pressed="true"], .cam-btn:hover { border-color: var(--gold); color: var(--gold-bright); }
+
+  .viewport-legend {
+    position: absolute; bottom: 12px; left: 14px; right: 14px; z-index: 10;
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px;
+    padding: 8px 14px; border-radius: 12px;
+    background: var(--bg-glass); backdrop-filter: blur(8px); border: 1px solid var(--line-soft);
+    font-size: 12px; color: var(--muted);
+  }
+  .legend-items { display: flex; gap: 14px; align-items: center; }
+  .legend-items span { display: inline-flex; align-items: center; gap: 6px; }
+
+  #hoverTip {
+    position: absolute; pointer-events: none; z-index: 20;
+    background: rgba(10, 12, 18, 0.94); border: 1px solid var(--gold);
+    border-radius: 10px; padding: 8px 12px; font-size: 12px; display: none; white-space: nowrap;
+  }
+
+  .inspector {
+    background: var(--bg-elev); border: 1px solid var(--line); border-radius: 20px;
+    padding: 20px; display: flex; flex-direction: column; gap: 16px;
+  }
+  .inspector-head { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 1px solid var(--line-soft); }
+  .inspector-head h2 { margin: 0; font-family: var(--serif); font-size: 28px; line-height: 1.1; }
+  .type-pill { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--gold); color: var(--gold-bright); }
+
+  .view-preview { position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--line-soft); aspect-ratio: 16 / 9; background: #08090d; }
+  .view-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .view-preview-cap {
+    position: absolute; inset: auto 0 0 0; padding: 8px 10px;
+    background: linear-gradient(180deg, transparent, rgba(8,9,13,0.92));
+    display: flex; justify-content: space-between; align-items: center; font-size: 11.5px;
+  }
+  .pov-btn { background: rgba(212,175,55,0.22); color: var(--gold-bright); border: 1px solid var(--gold); padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .pov-btn:hover { background: var(--gold); color: #08090d; }
+
+  .summary-row { display: flex; justify-content: space-between; align-items: center; font-size: 13.5px; padding: 8px 0; border-top: 1px dashed var(--line-soft); }
+  .summary-total { font-size: 22px; font-weight: 700; color: var(--gold-bright); font-variant-numeric: tabular-nums; }
+
+  dialog.modal {
+    background: var(--bg-elev); color: var(--ink); border: 1px solid var(--gold); border-radius: 20px;
+    padding: 0; width: min(520px, 94vw); box-shadow: 0 32px 90px rgba(0,0,0,0.88);
+  }
+  dialog.modal::backdrop { background: rgba(4, 5, 9, 0.8); backdrop-filter: blur(6px); }
+  .modal-head { display: flex; justify-content: space-between; align-items: center; padding: 18px 22px; border-bottom: 1px solid var(--line-soft); }
+  .modal-head h3 { margin: 0; font-family: var(--serif); font-size: 25px; }
+  .icon-close { background: transparent; border: 1px solid var(--line-soft); color: var(--muted); width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font-size: 18px; }
+  .modal-body { padding: 20px 22px; display: flex; flex-direction: column; gap: 14px; }
+  .field label { display: block; font-size: 12.5px; color: var(--muted); margin-bottom: 5px; }
+  .field input, .field select { width: 100%; background: var(--bg-card); color: var(--ink); border: 1px solid var(--line-soft); border-radius: 10px; padding: 11px 13px; font-family: inherit; }
+  .eticket { background: linear-gradient(145deg, #161a26, #0d0f16); border: 1px solid var(--gold); border-radius: 16px; padding: 18px; }
+  .qr-box { width: 104px; height: 104px; background: #fff; padding: 7px; border-radius: 10px; display: grid; grid-template-columns: repeat(11, 1fr); gap: 1px; flex-shrink: 0; }
+  .qr-box i { background: #09090d; display: block; }
+  .qr-box i.o { background: transparent; }
+  footer.site-footer { background: #06070a; border-top: 1px solid var(--line); padding: 48px 0 24px; color: var(--muted); font-size: 13.5px; margin-top: 24px; }
+  .foot-wrap { width: 100%; max-width: 1400px; margin: 0 auto; padding: 0 clamp(14px, 3vw, 32px); }
+  .foot-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--line-soft); }
+  @media (max-width: 860px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) { .foot-grid { grid-template-columns: 1fr; } }
+  .foot-col h4 { margin: 0 0 14px; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold-bright); }
+  .foot-col ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 9px; }
+  .foot-col a { color: var(--muted); text-decoration: none; transition: color .16s; }
+  .foot-col a:hover { color: var(--ink); }
+  .foot-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding-top: 20px; font-size: 12.5px; }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="merit-bilet.html" class="brand" aria-label="Merit Entertainment Ana Sayfa">
+    <img src="assets/merit-entertainment-logo.svg" alt="Merit Entertainment" style="height:46px; width:auto; display:block;">
+  </a>
+  <div class="event-pill" id="topEventPill"></div>
+  <a href="takvim.html" class="btn btn-ghost" style="padding:8px 16px; font-size:12.5px;" data-i18n="salon_back">← Etkinlik Değiştir</a>
+</header>
+
+<main class="wrap">
+  <div class="top-controls">
+    <div class="filter-bar" role="group" aria-label="Alan filtresi">
+      <button type="button" class="chip" data-filter="all" aria-pressed="true" data-i18n="salon_all">Tümü</button>
+      <button type="button" class="chip" data-filter="table" aria-pressed="false"><i class="dot" style="background:var(--masa)"></i><span data-i18n="salon_table">Masa</span></button>
+      <button type="button" class="chip" data-filter="loca" aria-pressed="false"><i class="dot" style="background:var(--loca)"></i><span data-i18n="salon_loca">Loca</span></button>
+      <input id="tableSearch" type="search" data-i18n-placeholder="salon_search" placeholder="Masa no ara (örn. 45)" aria-label="Masa numarası ara" style="background:var(--bg-elev); color:var(--ink); border:1px solid var(--line-soft); border-radius:999px; padding:7px 14px; font-family:inherit; font-size:12.5px; width:175px;">
+    </div>
+
+    <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+      <div class="guest-stepper" style="border-color:var(--line-soft); font-size:12.5px;">
+        <span style="color:var(--muted);" data-i18n="salon_hold">Masa tutma süresi:</span>
+        <b id="holdTimer" style="color:var(--gold-bright); font-variant-numeric:tabular-nums;">10:00</b>
+      </div>
+      <div class="guest-stepper" aria-label="Kişi sayısı">
+        <span style="color:var(--muted);" data-i18n="salon_guests">Kişi Sayısı:</span>
+        <button type="button" id="btnMinus" aria-label="Azalt">−</button>
+        <b id="guestCountVal">2</b>
+        <button type="button" id="btnPlus" aria-label="Artır">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="arena-layout">
+    <div class="viewport-card">
+      <div class="cam-toolbar" role="group" aria-label="Kamera açıları">
+        <button type="button" class="cam-btn" data-cam="overview" aria-pressed="true">Genel Bakış</button>
+        <button type="button" class="cam-btn" data-cam="stage" aria-pressed="false">Sahne Önü</button>
+        <button type="button" class="cam-btn" data-cam="loca" aria-pressed="false">Loca Balkonu</button>
+        <button type="button" class="cam-btn" data-cam="top" aria-pressed="false">Kuş Bakışı</button>
+        <button type="button" class="cam-btn" id="btnSeatPov" data-i18n="salon_pov" style="border-color:var(--gold); color:var(--gold-bright);">Masadan Sahneye Bak</button>
+      </div>
+      <canvas id="canvas3d" aria-label="Etkileşimli salon masa ve loca seçimi"></canvas>
+      <div id="hoverTip" role="tooltip"></div>
+      <div class="viewport-legend">
+        <div class="legend-items">
+          <span><i class="dot" style="background:var(--masa)"></i>Masa</span>
+          <span><i class="dot" style="background:var(--loca)"></i>Loca</span>
+          <span><i class="dot" style="background:var(--sold)"></i>Dolu</span>
+        </div>
+        <span>Sürükle: Döndür · Tekerlek: Yakınlaştır</span>
+      </div>
+    </div>
+
+    <aside class="inspector" aria-label="Seçili masa özeti">
+      <div class="inspector-head">
+        <div>
+          <h2 id="insTitle">Masa Seçin</h2>
+          <div style="font-size:12.5px; color:var(--muted);" id="insSub">Müsait bir masa veya locaya tıklayın</div>
+        </div>
+        <span class="type-pill" id="insType">Masa</span>
+      </div>
+
+      <div class="view-preview">
+        <img id="insPhoto" alt="Masadan canlı sahne görünümü">
+        <div class="view-preview-cap">
+          <span id="insViewLabel" data-i18n="salon_view">Masadan Sahne Görünümü</span>
+          <span id="insAngleBadge" style="font-size:11px; color:var(--gold-bright); font-weight:700;">—</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="summary-row"><span data-i18n="salon_event">Etkinlik</span><b id="sumEvent">—</b></div>
+        <div class="summary-row"><span data-i18n="salon_pick">Seçim</span><b id="sumPick">—</b></div>
+        <div class="summary-row"><span data-i18n="salon_unit_price">Kişi Başı Fiyat</span><b id="sumUnit">—</b></div>
+        <div class="summary-row"><span data-i18n="salon_fee">Hizmet &amp; KDV</span><b data-i18n="salon_fee_inc" style="color:var(--ok);">Dahil</b></div>
+        <div class="summary-row"><span data-i18n="salon_total">Toplam Tutar</span><span class="summary-total" id="sumTotal">₺0</span></div>
+      </div>
+
+      <button type="button" class="btn btn-primary" id="btnCheckout" disabled style="width:100%;" data-i18n="salon_checkout">Seç &amp; Ödemeye Geç →</button>
+    </aside>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="foot-wrap">
+    <div class="foot-grid">
+      <div class="foot-col">
+        <div style="margin-bottom:12px;"><b style="color:var(--gold-bright); letter-spacing:.18em; text-transform:uppercase;">Merit Entertainment</b></div>
+        <p style="margin:0; line-height:1.65;" data-i18n="foot_desc">Kuzey Kıbrıs'ın en prestijli gala salonlarında dünya standartlarında sahne prodüksiyonları ve unutulmaz konser geceleri.</p>
+      </div>
+      <div class="foot-col">
+        <h4 data-i18n="foot_explore">Keşfet</h4>
+        <ul>
+          <li><a href="merit-bilet.html" data-i18n="nav_home">Ana Sayfa</a></li>
+          <li><a href="yaklasan.html" data-i18n="nav_upcoming">Yaklaşan Etkinlikler</a></li>
+          <li><a href="takvim.html" data-i18n="nav_calendar">Etkinlik Takvimi</a></li>
+          <li><a href="biletim.html" data-i18n="nav_tickets">Biletim (PNR)</a></li>
+          <li><a href="kurumsal.html" data-i18n="nav_corp">Hakkımızda</a></li>
+          <li><a href="sss.html" data-i18n="nav_faq">Sık Sorulan Sorular</a></li>
+          <li><a href="iade.html" data-i18n="nav_refund">İade Koşulları</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>İletişim</h4>
+        <ul>
+          <li>Merit Royal Diamond Hotel &amp; Spa</li>
+          <li>Alsancak, Girne / KKTC</li>
+          <li>+90 392 650 40 00</li>
+          <li>entertainment@merithotels.com</li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Sosyal Medya</h4>
+        <ul>
+          <li><a href="https://www.instagram.com/merit.entertainment/" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px; margin-right:8px; color:var(--gold-bright);"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>@merit.entertainment</a></li>
+          <li><a href="https://www.facebook.com/meritentertainment/" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px; margin-right:8px; color:var(--gold-bright);"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>/meritentertainment</a></li>
+          <li><a href="https://www.merithotels.com/konserler" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px; margin-right:8px; color:var(--gold-bright);"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>merithotels.com/konserler</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Merit Entertainment. Tüm hakları saklıdır.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ÖDEME & E-BİLET MODALI -->
+<dialog class="modal" id="checkoutModal" aria-labelledby="chkTitle">
+  <div class="modal-head">
+    <h3 id="chkTitle">Bilgiler &amp; Hızlı Ödeme</h3>
+    <button type="button" class="icon-close" id="closeChk" aria-label="Kapat">×</button>
+  </div>
+  <div class="modal-body" id="step2">
+    <div style="background:var(--bg-card); padding:12px 14px; border-radius:12px; font-size:13px;">
+      <b style="color:var(--gold-bright);" id="chkEv"></b>
+      <div style="color:var(--muted); margin-top:3px;" id="chkDesc"></div>
+    </div>
+    <form id="chkForm" style="display:flex; flex-direction:column; gap:12px;">
+      <div class="field"><label for="gName">Ad Soyad *</label><input id="gName" required placeholder="Örn. Selin Yılmaz"></div>
+      <div class="field"><label for="gTel">Telefon *</label><input id="gTel" type="tel" required placeholder="+90 533 000 00 00"></div>
+      <div class="field"><label for="gMail">E-posta *</label><input id="gMail" type="email" required placeholder="selin@ornek.com"></div>
+      <button type="submit" class="btn btn-primary" style="width:100%;">Ödemeyi Tamamla &amp; Bilet Oluştur</button>
+    </form>
+  </div>
+  <div class="modal-body" id="step3" style="display:none;">
+    <div class="eticket">
+      <div style="display:flex; justify-content:space-between; gap:12px;">
+        <div>
+          <span style="font-size:11px; color:var(--ok); font-weight:700;">✓ ONAYLANDI · E-BİLET</span>
+          <h4 style="margin:4px 0 2px; font-family:var(--serif); font-size:26px;" id="tkArtist"></h4>
+          <div style="font-size:12.5px; color:var(--muted);" id="tkDate"></div>
+        </div>
+        <div class="qr-box" id="tkQr"></div>
+      </div>
+      <div style="margin-top:12px; border-top:1px dashed var(--line); padding-top:10px; display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:13px;">
+        <div><span style="color:var(--muted)">Misafir:</span> <b id="tkGuest"></b></div>
+        <div><span style="color:var(--muted)">PNR:</span> <b id="tkPnr" style="color:var(--gold-bright)"></b></div>
+        <div><span style="color:var(--muted)">Konum:</span> <b id="tkSeat"></b></div>
+        <div><span style="color:var(--muted)">Giriş:</span> <b id="tkGate"></b></div>
+      </div>
+    </div>
+    <button type="button" class="btn btn-primary" id="btnShowMyTable" style="width:100%;">Salonda Masamı Göster</button>
+  </div>
+</dialog>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import './i18n.js';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EVENTS, RAW_TABLES, LOCA_LABELS, VIEW_PHOTOS, getEventById } from './data.js';
+
+// Read URL params (?event=haluk&guests=4)
+const params = new URLSearchParams(window.location.search);
+const activeEvent = getEventById(params.get('event') || 'ozcan');
+let guestCount = Math.max(1, Math.min(12, parseInt(params.get('guests') || '2', 10) || 2));
+
+document.getElementById('topEventPill').innerHTML = `<b>${activeEvent.artist}</b> · ${activeEvent.date} · Saat ${activeEvent.time}`;
+document.getElementById('guestCountVal').textContent = guestCount;
+document.getElementById('sumEvent').textContent = `${activeEvent.artist} (${activeEvent.time})`;
+
+// Deterministic PRNG
+function rng(seed) { return () => (seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296; }
+const rand = rng(2026 + activeEvent.artist.length * 31);
+
+// Main LED stage focal line for accurate sightline distance/angle across front & rear rows
+const STAGE_FOCAL_Z = -27.25;
+const SIGHTLINE_OVERRIDES = {
+  // M-155 arka sağda (+16°); merkez kare yerine hemen önündeki M-140 açısını kullanır
+  'M-155': 'assets/sightlines/M-140.webp'
+};
+
+function resolveTablePhoto(num, nx, ny, deg) {
+  const id = `M-${num}`;
+  if (SIGHTLINE_OVERRIDES[id]) return SIGHTLINE_OVERRIDES[id];
+  // Yan kanat masalarında (|deg| >= 50°) izleyici sahneye dönünce sahne izleyici tarafında, salon karşıya doğru uzanır (3B Masadan Bak ile tam uyumlu)
+  if (Math.abs(deg) >= 50) {
+    let bestNum = num, bestD2 = Infinity;
+    for (const [cn, cnx, cny] of RAW_TABLES) {
+      if (cn === 147) continue; // M-147.webp sol kanat açılı çekilmiş istisna dosya
+      const d2 = (cnx + nx) ** 2 + (cny - ny) ** 2;
+      if (d2 < bestD2) { bestD2 = d2; bestNum = cn; }
+    }
+    return `assets/sightlines/M-${bestNum}.webp`;
+  }
+  return `assets/sightlines/${id}.webp`;
+}
+
+// Build 161 Tables + 12 Localar (NO "Casino Özel" — reserved/full tables are simply Dolu and unselectable!)
+const UNITS = [];
+RAW_TABLES.forEach(([num, nx, ny]) => {
+  // Position determines price and subtle monochrome luxury tone
+  let unitPrice = activeEvent.price;
+  let zoneColor = 0xc8c3b8; // platinum ivory (outer/rear)
+  if (Math.abs(nx) <= 0.52 && ny <= 0.16) {
+    unitPrice = Math.round(activeEvent.price * 2.8);
+    zoneColor = 0xd4af37; // champagne gold (center stage & T-catwalk box)
+  } else if (ny < 0.28) {
+    unitPrice = Math.round(activeEvent.price * 1.85);
+    zoneColor = 0xe3d5b8; // warm ivory (side/mid)
+  }
+
+  const isReservedFull = [35, 36, 38, 39, 50, 52, 64, 65].includes(num);
+  const freeCount = isReservedFull ? 0 : Math.floor(rand() * 13);
+  const id = `M-${num}`;
+  const x = nx * 35.0, z = ny * 24.8 - 1.2;
+  const deg = Math.round(Math.atan2(x, z - STAGE_FOCAL_Z) * 180 / Math.PI);
+  UNITS.push({
+    id, type: 'table', label: `Masa ${num}`,
+    nx, ny, x, z, y: 0,
+    price: unitPrice, zoneColor, freeCount, soldOut: freeCount === 0,
+    photo: resolveTablePhoto(num, nx, ny, deg)
+  });
+});
+
+LOCA_LABELS.forEach((lbl, idx) => {
+  const nx = -0.88 + (idx / (LOCA_LABELS.length - 1)) * 1.76;
+  const isSold = idx === 4 || idx === 5 || idx === 6;
+  const id = `L-${lbl}`;
+  UNITS.push({
+    id, type: 'loca', label: `Loca ${lbl}`,
+    nx, ny: 1.18, x: nx * 33.5, z: 27.6, y: 4.5,
+    price: 240000, zoneColor: 0xc99a3a, freeCount: isSold ? 0 : 12, soldOut: isSold,
+    photo: SIGHTLINE_OVERRIDES[id] || `assets/sightlines/${id}.webp`
+  });
+});
+
+let selectedUnit = UNITS.find(u => !u.soldOut && u.freeCount >= guestCount) || UNITS[0];
+let activeFilter = 'all';
+
+// --- THREE.JS 3D BALLROOM ---
+const canvas = document.getElementById('canvas3d');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.15;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0d1018);
+scene.fog = new THREE.FogExp2(0x0d1018, 0.0055);
+
+const camera = new THREE.PerspectiveCamera(46, 1, 0.2, 220);
+camera.position.set(0, 32, 46);
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.maxPolarAngle = Math.PI / 2.04;
+controls.minDistance = 8; controls.maxDistance = 86;
+controls.target.set(0, 1.4, 0);
+
+// Bright, warm, luxurious ballroom lighting
+scene.add(new THREE.AmbientLight(0xfff6e5, 1.35));
+scene.add(new THREE.HemisphereLight(0xfff8eb, 0x262838, 1.05));
+const dirLight = new THREE.DirectionalLight(0xfff1d6, 1.45);
+dirLight.position.set(16, 38, 22);
+scene.add(dirLight);
+const stageLight = new THREE.PointLight(activeEvent.accent, 3.2, 56);
+stageLight.position.set(0, 10, -22);
+scene.add(stageLight);
+
+// Dynamic Concert Poster Texture (Artist Visual + Official Merit Royal Diamond Logo + Typography)
+function makeEventScreenTexture(isSide = false) {
+  const c = document.createElement('canvas');
+  c.width = 1024;
+  c.height = 512;
+  const ctx = c.getContext('2d');
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+
+  const bgImg = new Image();
+  const logoImg = new Image();
+  let bgReady = false, logoReady = false;
+
+  function draw() {
+    // Rich dark navy-gold poster background
+    const g = ctx.createLinearGradient(0, 0, 1024, 512);
+    g.addColorStop(0, '#090e21');
+    g.addColorStop(0.55, '#121d42');
+    g.addColorStop(1, '#090d1c');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 1024, 512);
+
+    // Artist Portrait on the RIGHT at 100% full brightness (never covered by text!)
+    if (bgReady) {
+      const px = 610, py = 36, pw = 374, ph = 440;
+      ctx.save();
+      ctx.beginPath();
+      ctx.roundRect(px, py, pw, ph, 14);
+      ctx.clip();
+      const scale = Math.max(pw / bgImg.width, ph / bgImg.height);
+      const dw = bgImg.width * scale, dh = bgImg.height * scale;
+      ctx.drawImage(bgImg, px + (pw - dw) / 2, py + Math.min(0, (ph - dh) * 0.15), dw, dh);
+      ctx.restore();
+      ctx.strokeStyle = 'rgba(212, 175, 55, 0.75)';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(px, py, pw, ph);
+    }
+
+    // Gold outer poster frame
+    ctx.strokeStyle = '#d4af37';
+    ctx.lineWidth = 6;
+    ctx.strokeRect(18, 18, 988, 476);
+
+    // Official Merit Royal Diamond Shield Logo at top-left
+    if (logoReady) {
+      const lw = 115, lh = (logoImg.height / logoImg.width) * lw;
+      ctx.drawImage(logoImg, 54, 46, lw, lh);
+    }
+
+    // Crisp Concert Typography on the LEFT
+    const tx = 54;
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#f0d068';
+    ctx.font = '700 20px "Plus Jakarta Sans", "Segoe UI", sans-serif';
+    ctx.fillText('MERIT ENTERTAINMENT SUNAR', tx + 132, 102);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 62px Georgia, serif';
+    ctx.fillText(activeEvent.artist.toUpperCase(), tx, 265);
+
+    ctx.fillStyle = '#f0d068';
+    ctx.font = '600 26px "Plus Jakarta Sans", "Segoe UI", sans-serif';
+    ctx.fillText(activeEvent.sub.toUpperCase(), tx, 326);
+
+    ctx.fillStyle = '#e2e8f0';
+    ctx.font = '600 24px "Plus Jakarta Sans", "Segoe UI", sans-serif';
+    ctx.fillText(`${activeEvent.date.split('·')[0].trim()}  ·  SAAT ${activeEvent.time}`, tx, 384);
+
+    tex.needsUpdate = true;
+  }
+
+  bgImg.onload = () => { bgReady = true; draw(); if (typeof updatePreviewImage === 'function') updatePreviewImage(); };
+  logoImg.onload = () => { logoReady = true; draw(); if (typeof updatePreviewImage === 'function') updatePreviewImage(); };
+  bgImg.src = activeEvent.img;
+  logoImg.src = 'assets/merit-royal-diamond-logo.jpg';
+  draw();
+  return tex;
+}
+
+const mainScreenTex = makeEventScreenTexture(false);
+const sideScreenTex = makeEventScreenTexture(true);
+
+// Procedural Ballroom Carpet Texture (geometric gold/charcoal pattern)
+function makeCarpetTexture() {
+  const c = document.createElement('canvas');
+  c.width = 256; c.height = 256;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#222534';
+  ctx.fillRect(0, 0, 256, 256);
+  ctx.strokeStyle = 'rgba(212, 175, 55, 0.22)';
+  ctx.lineWidth = 1.5;
+  for (let i = 0; i <= 256; i += 64) {
+    ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 256); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(256, i); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i + 64, 64); ctx.stroke();
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(18, 16);
+  return tex;
+}
+
+// Spacious Bright Floor
+const floor = new THREE.Mesh(
+  new THREE.PlaneGeometry(73, 62),
+  new THREE.MeshStandardMaterial({ map: makeCarpetTexture(), roughness: 0.8, metalness: 0.06 })
+);
+floor.rotation.x = -Math.PI / 2;
+scene.add(floor);
+
+const wallMat = new THREE.MeshStandardMaterial({ color: 0x252432, roughness: 0.72, metalness: 0.12 });
+const goldMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, roughness: 0.28, metalness: 0.82 });
+const creamMat = new THREE.MeshStandardMaterial({ color: 0xebe4d8, roughness: 0.6, metalness: 0.08 });
+
+const backWall = new THREE.Mesh(new THREE.BoxGeometry(73, 15, 0.6), wallMat);
+backWall.position.set(0, 7.5, 29.5);
+scene.add(backWall);
+
+// Left & Right Walls WITH GIANT Event LED Screens + Gold Crown Molding
+[-36.5, 36.5].forEach(wx => {
+  const w = new THREE.Mesh(new THREE.BoxGeometry(0.6, 15, 62), wallMat);
+  w.position.set(wx, 7.5, 0);
+  scene.add(w);
+  const crown = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.45, 62), goldMat);
+  crown.position.set(wx > 0 ? wx - 0.3 : wx + 0.3, 14.5, 0);
+  scene.add(crown);
+
+  // Giant framed LED screen on each side wall
+  const sx = wx > 0 ? wx - 0.55 : wx + 0.55;
+  const frame = new THREE.Mesh(new THREE.BoxGeometry(0.25, 9.6, 23.6), goldMat);
+  frame.position.set(wx > 0 ? wx - 0.38 : wx + 0.38, 6.6, -2);
+  scene.add(frame);
+
+  const scr = new THREE.Mesh(
+    new THREE.PlaneGeometry(23.0, 9.0),
+    new THREE.MeshBasicMaterial({ map: sideScreenTex })
+  );
+  scr.position.set(sx, 6.6, -2);
+  scr.rotation.y = wx > 0 ? -Math.PI / 2 : Math.PI / 2;
+  scene.add(scr);
+});
+
+// Stage & T-Catwalk + Gold Trim (brought flush with front-row tables 36-39)
+const stageMat = new THREE.MeshStandardMaterial({ color: 0x161924, roughness: 0.42, metalness: 0.35 });
+const mainStage = new THREE.Mesh(new THREE.BoxGeometry(24, 1.35, 9.5), stageMat);
+mainStage.position.set(0, 0.68, -22.5);
+scene.add(mainStage);
+
+const catwalkStem = new THREE.Mesh(new THREE.BoxGeometry(3.4, 1.15, 11.5), stageMat);
+catwalkStem.position.set(0, 0.58, -12.5);
+scene.add(catwalkStem);
+
+const catwalkHead = new THREE.Mesh(new THREE.BoxGeometry(11.5, 1.15, 3.2), stageMat);
+catwalkHead.position.set(0, 0.58, -6.2);
+scene.add(catwalkHead);
+
+const catwalkTrim = new THREE.Mesh(new THREE.BoxGeometry(11.6, 0.08, 3.3), goldMat);
+catwalkTrim.position.set(0, 1.16, -6.2);
+scene.add(catwalkTrim);
+
+// Overhead Concert Truss + Animated Volumetric Spotlight Beams (above stage)
+const truss = new THREE.Mesh(new THREE.BoxGeometry(26, 0.45, 0.45), new THREE.MeshStandardMaterial({ color: 0x323646, metalness: 0.8, roughness: 0.3 }));
+truss.position.set(0, 12.6, -25.2);
+scene.add(truss);
+
+const spotBeams = [];
+const beamGeo = new THREE.ConeGeometry(2.8, 14.5, 16, 1, true);
+[-8, -3, 3, 8].forEach((bx, idx) => {
+  const beamMat = new THREE.MeshBasicMaterial({
+    color: idx % 2 === 0 ? 0xd4af37 : 0x3b82f6,
+    transparent: true, opacity: 0.06, side: THREE.DoubleSide, depthWrite: false
+  });
+  const beam = new THREE.Mesh(beamGeo, beamMat);
+  beam.position.set(bx, 5.8, -19.5);
+  beam.rotation.x = 0.28;
+  scene.add(beam);
+  spotBeams.push({ mesh: beam, phase: idx * 1.4 });
+});
+
+const ledScreen = new THREE.Mesh(
+  new THREE.PlaneGeometry(22, 10.0),
+  new THREE.MeshBasicMaterial({ map: mainScreenTex })
+);
+ledScreen.position.set(0, 6.4, -27.2);
+scene.add(ledScreen);
+
+// 3 Multi-Tier Crystal Chandeliers
+const goldGlow = new THREE.PointLight(0xffe8a3, 2.8, 64);
+goldGlow.position.set(0, 14, 2);
+scene.add(goldGlow);
+
+[-18, 0, 18].forEach(cx => {
+  const grp = new THREE.Group();
+  const tier1 = new THREE.Mesh(
+    new THREE.CylinderGeometry(2.1, 1.5, 1.3, 24, 1, true),
+    new THREE.MeshStandardMaterial({ color: 0xfff8e7, emissive: 0xd4af37, emissiveIntensity: 0.8, wireframe: true })
+  );
+  const tier2 = new THREE.Mesh(
+    new THREE.CylinderGeometry(1.4, 0.7, 1.0, 20, 1, true),
+    new THREE.MeshStandardMaterial({ color: 0xfff8e7, emissive: 0xf0d068, emissiveIntensity: 0.9, wireframe: true })
+  );
+  tier2.position.y = -1.1;
+  const core = new THREE.Mesh(new THREE.SphereGeometry(0.65, 14, 14), new THREE.MeshBasicMaterial({ color: 0xfff8dc }));
+  grp.add(tier1, tier2, core);
+  grp.position.set(cx, 12.8, -2);
+  scene.add(grp);
+});
+
+// System Kontrol Booth (fills exact slot between 138-139 & 156-155)
+const sysCtrl = new THREE.Mesh(
+  new THREE.BoxGeometry(12.2, 1.6, 5.2),
+  new THREE.MeshStandardMaterial({ color: 0x263145, roughness: 0.55 })
+);
+sysCtrl.position.set(1.2, 0.8, 18.8);
+scene.add(sysCtrl);
+
+// Elevated Balcony Deck & Curved Opera-Box Localar (each box has its own curved cream-and-gold railing + table & chairs!)
+const balconyDeck = new THREE.Mesh(new THREE.BoxGeometry(69, 0.65, 6.2), new THREE.MeshStandardMaterial({ color: 0x262330, roughness: 0.7 }));
+balconyDeck.position.set(0, 4.1, 27.9);
+scene.add(balconyDeck);
+
+// Tables, Localar & Instanced Chairs
+const pickables = [];
+const unitMeshes = new Map();
+const clothGeo = new THREE.CylinderGeometry(1.16, 1.2, 0.78, 22);
+const rimGeo = new THREE.CylinderGeometry(1.2, 1.2, 0.09, 22);
+const labelPlaneGeo = new THREE.PlaneGeometry(1.45, 1.45);
+const locaLabelGeo = new THREE.PlaneGeometry(1.5, 1.5);
+const locaBaseGeo = new THREE.CylinderGeometry(2.45, 2.15, 0.28, 22, 1, false, 0, Math.PI);
+const locaWallGeo = new THREE.CylinderGeometry(2.48, 2.25, 0.95, 22, 1, true, 0, Math.PI);
+const locaRailGeo = new THREE.TorusGeometry(2.48, 0.075, 8, 24, Math.PI);
+const locaTableGeo = new THREE.CylinderGeometry(1.05, 0.95, 0.76, 18);
+const locaRimGeo = new THREE.CylinderGeometry(1.08, 1.08, 0.09, 18);
+const locaChairGeo = new THREE.BoxGeometry(0.32, 0.56, 0.32);
+
+function makeNumberTexture(text, isDarkBg = false) {
+  const c = document.createElement('canvas');
+  c.width = 96; c.height = 96;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = isDarkBg ? '#f7f5f0' : '#0b0d14';
+  ctx.font = 'bold 44px "Plus Jakarta Sans", "Segoe UI", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, 48, 50);
+  const tex = new THREE.CanvasTexture(c);
+  tex.anisotropy = 4;
+  return tex;
+}
+
+const chairGeo = new THREE.BoxGeometry(0.3, 0.56, 0.3);
+const chairInstanced = new THREE.InstancedMesh(chairGeo, new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.45 }), UNITS.filter(u => u.type === 'table').length * 12);
+const dummy = new THREE.Object3D();
+const tmpCol = new THREE.Color();
+const chairIndexMap = new Map();
+let ci = 0;
+
+UNITS.forEach(u => {
+  const grp = new THREE.Group();
+  grp.position.set(u.x, u.y, u.z);
+  const avail = !u.soldOut && u.freeCount >= guestCount;
+  const colHex = !avail ? 0x5c6170 : u.zoneColor;
+  const mat = new THREE.MeshStandardMaterial({ color: colHex, roughness: 0.32, metalness: 0.35 });
+
+  if (u.type === 'table') {
+    const cloth = new THREE.Mesh(clothGeo, creamMat); cloth.position.y = 0.37; cloth.userData.unit = u;
+    const rim = new THREE.Mesh(rimGeo, mat); rim.position.y = 0.75; rim.userData.unit = u;
+    const numMesh = new THREE.Mesh(
+      labelPlaneGeo,
+      new THREE.MeshBasicMaterial({ map: makeNumberTexture(u.id.slice(2), !avail), transparent: true, depthWrite: false })
+    );
+    numMesh.rotation.x = -Math.PI / 2;
+    numMesh.position.y = 0.81;
+    grp.add(cloth, rim, numMesh);
+    pickables.push(rim, cloth);
+    unitMeshes.set(u.id, { mesh: rim, mat });
+
+    const idxs = [];
+    for (let i = 0; i < 12; i++) {
+      const a = (i / 12) * Math.PI * 2;
+      dummy.position.set(u.x + Math.cos(a) * 1.44, 0.28, u.z + Math.sin(a) * 1.44);
+      dummy.rotation.set(0, -a, 0);
+      dummy.updateMatrix();
+      chairInstanced.setMatrixAt(ci, dummy.matrix);
+      tmpCol.setHex(i < u.freeCount ? u.zoneColor : 0x464b57);
+      chairInstanced.setColorAt(ci, tmpCol);
+      idxs.push(ci);
+      ci++;
+    }
+    chairIndexMap.set(u.id, idxs);
+  } else {
+    // Opera-box curved cream balustrade + brass rail + private table & 8 armchairs
+    const base = new THREE.Mesh(locaBaseGeo, new THREE.MeshStandardMaterial({ color: 0x201d28, roughness: 0.7 }));
+    base.rotation.y = Math.PI / 2;
+    base.position.y = 0.05;
+    base.userData.unit = u;
+
+    const wall = new THREE.Mesh(locaWallGeo, creamMat);
+    wall.rotation.y = Math.PI / 2;
+    wall.position.y = 0.52;
+    wall.userData.unit = u;
+
+    const rail = new THREE.Mesh(locaRailGeo, goldMat);
+    rail.rotation.x = Math.PI / 2;
+    rail.rotation.z = Math.PI;
+    rail.position.y = 1.02;
+    rail.userData.unit = u;
+
+    const tableBody = new THREE.Mesh(locaTableGeo, new THREE.MeshStandardMaterial({ color: 0x3b271c, roughness: 0.35, metalness: 0.15 }));
+    tableBody.position.set(0, 0.48, -0.55);
+    tableBody.userData.unit = u;
+
+    const tableTop = new THREE.Mesh(locaRimGeo, mat);
+    tableTop.position.set(0, 0.88, -0.55);
+    tableTop.userData.unit = u;
+
+    const numMesh = new THREE.Mesh(
+      locaLabelGeo,
+      new THREE.MeshBasicMaterial({ map: makeNumberTexture(u.id.slice(2), !avail), transparent: true, depthWrite: false })
+    );
+    numMesh.rotation.x = -Math.PI / 2;
+    numMesh.position.set(0, 0.94, -0.55);
+
+    const chairMatLoca = new THREE.MeshStandardMaterial({ color: avail ? 0xc99a3a : 0x464b57, roughness: 0.45 });
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2;
+      const ch = new THREE.Mesh(locaChairGeo, chairMatLoca);
+      ch.position.set(Math.cos(a) * 1.38, 0.42, -0.55 + Math.sin(a) * 1.38);
+      ch.rotation.y = -a;
+      ch.userData.unit = u;
+      grp.add(ch);
+      pickables.push(ch);
+    }
+
+    grp.add(base, wall, rail, tableBody, tableTop, numMesh);
+    pickables.push(tableTop, tableBody, wall, base, rail);
+    unitMeshes.set(u.id, { mesh: tableTop, mat });
+  }
+  scene.add(grp);
+});
+chairInstanced.instanceMatrix.needsUpdate = true;
+chairInstanced.instanceColor.needsUpdate = true;
+scene.add(chairInstanced);
+
+function sync3DChairs() {
+  UNITS.forEach(u => {
+    if (u.type !== 'table') return;
+    const idxs = chairIndexMap.get(u.id);
+    if (!idxs) return;
+    const isSel = selectedUnit && selectedUnit.id === u.id;
+    idxs.forEach((idx, i) => {
+      if (isSel && i < guestCount) tmpCol.setHex(0xffffff);
+      else tmpCol.setHex(i < u.freeCount ? u.zoneColor : 0x464b57);
+      chairInstanced.setColorAt(idx, tmpCol);
+    });
+  });
+  chairInstanced.instanceColor.needsUpdate = true;
+}
+
+const selRing = new THREE.Mesh(
+  new THREE.RingGeometry(1.08, 1.36, 32),
+  new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide })
+);
+selRing.rotation.x = -Math.PI / 2;
+scene.add(selRing);
+
+function refreshAvailabilityColors() {
+  UNITS.forEach(u => {
+    const m = unitMeshes.get(u.id);
+    const avail = !u.soldOut && u.freeCount >= guestCount;
+    const filterMatch = activeFilter === 'all' || u.type === activeFilter;
+    m.mat.color.setHex(!avail ? 0x5c6170 : u.zoneColor);
+    m.mat.transparent = !filterMatch;
+    m.mat.opacity = filterMatch ? 1 : 0.14;
+  });
+}
+
+// Camera Tween
+let camAnim = null;
+function flyCamera(pos, target, dur = 650) {
+  const sP = camera.position.clone(), sT = controls.target.clone();
+  const eP = new THREE.Vector3(...pos), eT = new THREE.Vector3(...target);
+  const t0 = performance.now();
+  camAnim = (now) => {
+    const p = Math.min(1, (now - t0) / dur);
+    const e = 1 - Math.pow(1 - p, 3);
+    camera.position.lerpVectors(sP, eP, e);
+    controls.target.lerpVectors(sT, eT, e);
+    if (p >= 1) camAnim = null;
+  };
+}
+
+function resize() {
+  const w = canvas.parentElement.clientWidth, h = canvas.parentElement.clientHeight;
+  camera.aspect = w / h; camera.updateProjectionMatrix(); renderer.setSize(w, h, false);
+}
+window.addEventListener('resize', resize);
+resize();
+
+// Raycasting (Dolu tables CANNOT be selected!)
+const raycaster = new THREE.Raycaster(), pointer = new THREE.Vector2();
+const hoverTip = document.getElementById('hoverTip');
+
+function getHit(e) {
+  const r = canvas.getBoundingClientRect();
+  pointer.x = ((e.clientX - r.left) / r.width) * 2 - 1;
+  pointer.y = -((e.clientY - r.top) / r.height) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+  const hits = raycaster.intersectObjects(pickables, false);
+  return hits.length ? hits[0].object.userData.unit : null;
+}
+
+canvas.addEventListener('pointermove', (e) => {
+  const u = getHit(e);
+  if (u) {
+    const avail = !u.soldOut && u.freeCount >= guestCount;
+    canvas.style.cursor = avail ? 'pointer' : 'not-allowed';
+    const r = canvas.getBoundingClientRect();
+    hoverTip.style.display = 'block';
+    hoverTip.style.left = Math.min(r.width - 190, e.clientX - r.left + 14) + 'px';
+    hoverTip.style.top = Math.max(12, e.clientY - r.top - 48) + 'px';
+    hoverTip.innerHTML = avail
+      ? `<b style="color:var(--gold-bright)">${u.label}</b> · ${u.type === 'loca' ? 'Loca' : 'Masa'}<br><span style="color:var(--muted)">₺${u.price.toLocaleString('tr-TR')} ${u.type === 'loca' ? '(Tam Loca)' : '/ kişi'}</span>`
+      : `<b style="color:var(--muted)">${u.label}</b><br><span style="color:#fda4af">Dolu (Seçilemez)</span>`;
+  } else {
+    canvas.style.cursor = 'grab';
+    hoverTip.style.display = 'none';
+  }
+});
+
+let downPt = null;
+canvas.addEventListener('pointerdown', (e) => { downPt = [e.clientX, e.clientY]; });
+canvas.addEventListener('pointerup', (e) => {
+  if (!downPt || Math.hypot(e.clientX - downPt[0], e.clientY - downPt[1]) >= 6) return;
+  const u = getHit(e);
+  if (u && !u.soldOut && u.freeCount >= guestCount) selectUnit(u);
+});
+
+// Per-table & per-loca sightline preview from pre-rendered assets/sightlines/*.webp
+function updatePreviewImage() {
+  if (!selectedUnit) return;
+  const u = selectedUnit;
+  const imgEl = document.getElementById('insPhoto');
+  const distM = Math.round(Math.hypot(u.x, u.z - STAGE_FOCAL_Z));
+  const deg = Math.round(Math.atan2(u.x, u.z - STAGE_FOCAL_Z) * 180 / Math.PI);
+  const sideLbl = Math.abs(deg) < 8 ? 'Merkez' : deg < 0 ? `Sol ${Math.abs(deg)}°` : `Sağ ${deg}°`;
+  document.getElementById('insAngleBadge').textContent = `${distM}m · ${sideLbl}`;
+
+  imgEl.style.objectPosition = '50% 50%';
+  imgEl.style.transform = 'scale(1)';
+  if (imgEl.getAttribute('src') !== u.photo) {
+    imgEl.src = u.photo;
+  }
+}
+
+function selectUnit(u) {
+  selectedUnit = u;
+  selRing.position.set(u.x, u.y + (u.type === 'loca' ? 0.96 : 0.08), u.z + (u.type === 'loca' ? -0.55 : 0));
+  selRing.scale.setScalar(u.type === 'loca' ? 1.35 : 1);
+
+  document.getElementById('insTitle').textContent = u.label;
+  document.getElementById('insSub').textContent = u.type === 'loca' ? 'Yükseltilmiş Balkon · 12 Kişilik' : `${u.freeCount} kişilik yer müsait`;
+  document.getElementById('insType').textContent = u.type === 'loca' ? 'Loca' : 'Masa';
+  document.getElementById('insViewLabel').textContent = `${u.label} — Sahne Görünümü`;
+  updatePreviewImage();
+
+  const total = u.type === 'loca' ? u.price : u.price * guestCount;
+  document.getElementById('sumPick').textContent = u.type === 'loca' ? `${u.label} (Tam Loca)` : `${u.label} · ${guestCount} Kişi`;
+  document.getElementById('sumUnit').textContent = u.type === 'loca' ? `₺${u.price.toLocaleString('tr-TR')} (Loca)` : `₺${u.price.toLocaleString('tr-TR')}`;
+  document.getElementById('sumTotal').textContent = `₺${total.toLocaleString('tr-TR')}`;
+  document.getElementById('btnCheckout').disabled = false;
+  sync3DChairs();
+}
+
+// Guest count stepper
+function setGuests(n) {
+  guestCount = Math.max(1, Math.min(12, n));
+  document.getElementById('guestCountVal').textContent = guestCount;
+  refreshAvailabilityColors();
+  if (selectedUnit.soldOut || selectedUnit.freeCount < guestCount) {
+    const next = UNITS.find(u => !u.soldOut && u.freeCount >= guestCount);
+    if (next) selectUnit(next);
+  } else {
+    selectUnit(selectedUnit);
+  }
+}
+document.getElementById('btnMinus').addEventListener('click', () => setGuests(guestCount - 1));
+document.getElementById('btnPlus').addEventListener('click', () => setGuests(guestCount + 1));
+
+// Filters & Camera Presets
+document.querySelectorAll('.chip[data-filter]').forEach(c => {
+  c.addEventListener('click', () => {
+    activeFilter = c.dataset.filter;
+    document.querySelectorAll('.chip[data-filter]').forEach(x => x.setAttribute('aria-pressed', 'false'));
+    c.setAttribute('aria-pressed', 'true');
+    refreshAvailabilityColors();
+  });
+});
+
+document.querySelectorAll('.cam-btn[data-cam]').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.cam-btn').forEach(x => x.setAttribute('aria-pressed', 'false'));
+    b.setAttribute('aria-pressed', 'true');
+    const c = b.dataset.cam;
+    if (c === 'overview') flyCamera([0, 32, 46], [0, 1.4, 0]);
+    if (c === 'stage') flyCamera([0, 8, 6], [0, 3.8, -26]);
+    if (c === 'loca') flyCamera([0, 8.5, 27], [0, 2.8, -24]);
+    if (c === 'top') flyCamera([0, 58, 2], [0, 0, 0]);
+  });
+});
+
+document.getElementById('btnSeatPov').addEventListener('click', () => {
+  document.querySelectorAll('.cam-btn').forEach(x => x.setAttribute('aria-pressed', 'false'));
+  document.getElementById('btnSeatPov').setAttribute('aria-pressed', 'true');
+  flyCamera([selectedUnit.x, selectedUnit.y + 2.0, selectedUnit.z], [0, 3.8, -24], 800);
+});
+
+// Checkout Modal
+const modal = document.getElementById('checkoutModal');
+document.getElementById('btnCheckout').addEventListener('click', () => {
+  document.getElementById('step2').style.display = 'flex';
+  document.getElementById('step3').style.display = 'none';
+  document.getElementById('chkEv').textContent = `${activeEvent.artist} · ${activeEvent.date} · Saat ${activeEvent.time}`;
+  document.getElementById('chkDesc').textContent = `${document.getElementById('sumPick').textContent} · ${document.getElementById('sumTotal').textContent}`;
+  modal.showModal();
+});
+document.getElementById('closeChk').addEventListener('click', () => modal.close());
+document.getElementById('chkForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  document.getElementById('step2').style.display = 'none';
+  document.getElementById('step3').style.display = 'flex';
+  const pnr = 'ME' + Math.random().toString(36).substring(2, 6).toUpperCase();
+  const guestName = document.getElementById('gName').value.trim();
+  const gate = selectedUnit.nx < -0.3 ? 'Kapı 1' : selectedUnit.nx > 0.3 ? 'Kapı 3' : 'Kapı 2';
+  const seatSummary = document.getElementById('sumPick').textContent;
+
+  document.getElementById('tkArtist').textContent = activeEvent.artist;
+  document.getElementById('tkDate').textContent = `${activeEvent.date} · Saat ${activeEvent.time}`;
+  document.getElementById('tkGuest').textContent = guestName;
+  document.getElementById('tkPnr').textContent = pnr;
+  document.getElementById('tkSeat').textContent = seatSummary;
+  document.getElementById('tkGate').textContent = gate;
+
+  // Persist to localStorage so biletim.html can retrieve it immediately
+  try {
+    const prev = JSON.parse(localStorage.getItem('merit_tickets') || '[]');
+    prev.unshift({
+      pnr, eventId: activeEvent.id, artist: activeEvent.artist,
+      date: `${activeEvent.date} · Saat ${activeEvent.time}`,
+      guest: guestName, seat: seatSummary, unitId: selectedUnit.id, gate
+    });
+    localStorage.setItem('merit_tickets', JSON.stringify(prev.slice(0, 10)));
+  } catch {}
+
+  const q = rng(pnr.charCodeAt(2) * 71);
+  document.getElementById('tkQr').innerHTML = Array.from({ length: 121 }, (_, i) => {
+    const x = i % 11, y = Math.floor(i / 11);
+    const corner = (x < 3 && y < 3) || (x > 7 && y < 3) || (x < 3 && y > 7);
+    return `<i class="${corner || q() > 0.48 ? '' : 'o'}"></i>`;
+  }).join('');
+});
+document.getElementById('btnShowMyTable').addEventListener('click', () => {
+  modal.close();
+  flyCamera([selectedUnit.x, selectedUnit.y + 8, selectedUnit.z + 9], [selectedUnit.x, selectedUnit.y + 0.5, selectedUnit.z], 800);
+});
+
+// 10:00 Hold Countdown Timer
+let holdSec = 600;
+setInterval(() => {
+  if (holdSec > 0) holdSec--;
+  const mm = String(Math.floor(holdSec / 60)).padStart(2, '0');
+  const ss = String(holdSec % 60).padStart(2, '0');
+  const el = document.getElementById('holdTimer');
+  if (el) el.textContent = `${mm}:${ss}`;
+}, 1000);
+
+// Quick Table Number Search (e.g. "45" or "L1")
+document.getElementById('tableSearch').addEventListener('change', (e) => {
+  const q = e.target.value.trim().toUpperCase();
+  if (!q) return;
+  const found = UNITS.find(u => u.id === `M-${q}` || u.id === `L-${q}` || u.id === q || u.label.toUpperCase() === q);
+  if (found && !found.soldOut) {
+    selectUnit(found);
+    flyCamera([found.x, found.y + 10, found.z + 11], [found.x, found.y + 0.5, found.z], 700);
+  }
+});
+
+// Support ?focus=M-37 from Biletim (PNR) page
+const focusId = params.get('focus');
+if (focusId) {
+  const fu = UNITS.find(u => u.id === focusId);
+  if (fu) {
+    selectedUnit = fu;
+    setTimeout(() => flyCamera([fu.x, fu.y + 8, fu.z + 9], [fu.x, fu.y + 0.5, fu.z], 800), 300);
+  }
+}
+
+function animate(now) {
+  requestAnimationFrame(animate);
+  if (camAnim) camAnim(now);
+  const t = now * 0.0006;
+  spotBeams.forEach(b => { b.mesh.rotation.z = Math.sin(t + b.phase) * 0.22; });
+  controls.update();
+  renderer.render(scene, camera);
+}
+requestAnimationFrame(animate);
+selectUnit(selectedUnit);
+</script>
+</body>
+</html>

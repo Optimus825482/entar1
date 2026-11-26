@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sık Sorulan Sorular · Merit Entertainment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08090d; --bg-elev: #11131a; --bg-card: #161923; --ink: #f7f5f0; --muted: #a6aab8;
+    --line: rgba(212, 175, 55, 0.22); --line-soft: rgba(255, 255, 255, 0.08);
+    --gold: #d4af37; --gold-bright: #f0d068;
+    --serif: "Cormorant Garamond", Georgia, serif;
+    --sans: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.65 var(--sans); -webkit-font-smoothing: antialiased; }
+  :focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 2px; }
+  header.topbar { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px clamp(16px, 4vw, 44px); background: rgba(8, 9, 13, 0.88); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line-soft); }
+  .brand { display: flex; align-items: center; text-decoration: none; }
+  nav.nav { display: flex; align-items: center; gap: 20px; }
+  nav.nav a { color: var(--muted); text-decoration: none; font-size: 13.5px; font-weight: 500; }
+  nav.nav a:hover, nav.nav a[aria-current="page"] { color: var(--ink); }
+  @media (max-width: 860px) { nav.nav a:not(:first-child) { display: none; } }
+  .wrap { width: 100%; max-width: 980px; margin: 0 auto; padding: 48px clamp(16px, 4vw, 36px) 84px; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 11.5px; letter-spacing: .24em; text-transform: uppercase; font-weight: 700; color: var(--gold); margin-bottom: 10px; }
+  .eyebrow::before { content: ""; width: 28px; height: 1px; background: var(--gold); }
+  h1 { font-family: var(--serif); font-size: clamp(34px, 5vw, 56px); margin: 0 0 8px; line-height: 1.05; }
+  details { background: var(--bg-elev); border: 1px solid var(--line-soft); border-radius: 14px; padding: 16px 20px; margin-bottom: 12px; transition: border-color .2s; }
+  details[open] { border-color: var(--gold); }
+  summary { font-weight: 700; cursor: pointer; font-size: 15.5px; color: var(--gold-bright); }
+  details p { margin: 10px 0 0; color: var(--muted); font-size: 14px; }
+  details a { color: var(--gold-bright); }
+  .vip-cta {
+    margin-top: 38px; background: linear-gradient(135deg, rgba(212,175,55,0.12), rgba(17,19,26,0.95));
+    border: 1px solid var(--gold); border-radius: 20px; padding: 28px;
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px;
+  }
+  .vip-cta h2 { margin: 4px 0 6px; font-family: var(--serif); font-size: clamp(26px, 3.4vw, 34px); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 22px; border-radius: 999px; font-weight: 700; font-size: 13.5px; border: 1px solid transparent; cursor: pointer; text-decoration: none; font-family: inherit; }
+  .btn-primary { background: var(--gold); color: #08090d; }
+  .btn-primary:hover { background: var(--gold-bright); }
+  .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+  footer.site-footer { background: #06070a; border-top: 1px solid var(--line); padding: 56px 0 28px; color: var(--muted); font-size: 13.5px; }
+  .foot-wrap { width: 100%; max-width: 1320px; margin: 0 auto; padding: 0 clamp(16px, 3.5vw, 36px); }
+  .foot-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 32px; padding-bottom: 36px; border-bottom: 1px solid var(--line-soft); }
+  @media (max-width: 860px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) { .foot-grid { grid-template-columns: 1fr; } }
+  .foot-col h4 { margin: 0 0 14px; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold-bright); }
+  .foot-col ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 9px; }
+  .foot-col a { color: var(--muted); text-decoration: none; }
+  .foot-col a:hover { color: var(--ink); }
+  .foot-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding-top: 22px; font-size: 12.5px; }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a href="merit-bilet.html" class="brand" aria-label="Merit Entertainment Ana Sayfa">
+    <img src="assets/merit-entertainment-logo.svg" alt="Merit Entertainment" style="height:60px; width:auto; display:block;">
+  </a>
+  <nav class="nav">
+    <a href="merit-bilet.html" data-i18n="nav_home">Ana Sayfa</a>
+    <a href="yaklasan.html" data-i18n="nav_upcoming">Yaklaşan Etkinlikler</a>
+    <a href="takvim.html" data-i18n="nav_calendar">Etkinlik Takvimi</a>
+    <a href="biletim.html" data-i18n="nav_tickets">Biletim (PNR)</a>
+    <a href="kurumsal.html" data-i18n="nav_corp">Hakkımızda</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <div class="eyebrow">Bilmeniz Gerekenler</div>
+  <h1 data-i18n="nav_faq">Sık Sorulan Sorular</h1>
+  <p style="color:var(--muted); margin:0 0 28px;">Başka bir sorunuz varsa bize yazın: <a href="mailto:entertainment@merithotels.com" style="color:var(--gold-bright)">entertainment@merithotels.com</a></p>
+
+  <details open>
+    <summary>Biletimi nasıl alırım?</summary>
+    <p>Kişi sayısını seçin, 3B salonda masanızı belirleyin ve ödeme adımını tamamlayın. E-biletiniz anında ekranda oluşur; yazdırabilir veya telefonunuzda saklayabilirsiniz. Ayrıca <a href="biletim.html">Biletim (PNR)</a> sayfasından dilediğiniz zaman sorgulayabilirsiniz.</p>
+  </details>
+  <details>
+    <summary>Masa ve sandalye düzeni nasıl işliyor?</summary>
+    <p>Salonda 12 kişilik yuvarlak masalar bulunur. Grubunuza uygun masayı seçtiğinizde boş sandalyeler otomatik olarak grubunuz için ayrılır. Sahne çevresi masalar ve localar ayrı fiyat kademelerindedir.</p>
+  </details>
+  <details>
+    <summary>Yaş sınırı var mı?</summary>
+    <p>Etkinliklerimiz kesin olarak <strong>18 yaş ve üzeri</strong> konuklarımıza yöneliktir. <strong>18 yaş altı konuklar refakatçi eşliğinde dahi salona kabul edilmemektedir.</strong> Kapıda kimlik kontrolü yapılabilir.</p>
+  </details>
+  <details>
+    <summary>Kıyafet kuralı nedir?</summary>
+    <p>Smart casual / şık akşam giyimi önerilir. Yılbaşı ve özel gala gecelerinde abiye veya takım elbise gibi daha şık bir kombin tercih etmenizi rica ederiz.</p>
+  </details>
+  <details>
+    <summary>İptal ve iade koşulları nelerdir?</summary>
+    <p>Etkinlikten <strong>72 saat öncesine kadar</strong> tam iade yapılır. Daha kısa sürelerde biletinizi başka bir isme devredebilir veya aynı sezon içindeki başka bir etkinliğe aktarabilirsiniz. Tüm yasal detaylar için <a href="iade.html">İade Koşulları</a> sayfamızı inceleyebilirsiniz.</p>
+  </details>
+  <details>
+    <summary>Kapı açılış ve gala yemeği saatleri nasıldır?</summary>
+    <p>Kapı açılışı genellikle 20:00'de başlar; gala yemeği servisi 20:30 itibarıyla yapılır ve sanatçı performansı 22:00'de (Yılbaşı gecelerinde 22:30'da) başlar. Yemek servisinin aksamaması için etkinlikten en az 45 dakika önce salonda olmanız önerilir.</p>
+  </details>
+  <details>
+    <summary>Otopark ve vale hizmeti mevcut mu?</summary>
+    <p>Evet. Tüm konser ve gala gecelerimizde konuklarımız için otel girişinde ücretsiz vale ve otopark hizmeti sunulmaktadır.</p>
+  </details>
+  <details>
+    <summary>Konser sırasında fotoğraf ve video çekilebilir mi?</summary>
+    <p>Cep telefonu ile anı amaçlı kısa fotoğraf ve video çekimi serbesttir. Diğer konukların görüş açısını engellememek adına profesyonel kamera, tripod ve flaş kullanımına izin verilmemektedir.</p>
+  </details>
+  <details>
+    <summary>Özel loca veya kurumsal rezervasyon yapabilir miyim?</summary>
+    <p>Evet. Locanın tamamını veya kurumsal gruplar için özel düzenlemeleri <a href="mailto:entertainment@merithotels.com">entertainment@merithotels.com</a> adresinden ya da +90 392 650 40 00 numaralı hattımızdan planlayabiliriz.</p>
+  </details>
+
+  <section class="vip-cta" aria-label="Özel Rezervasyon">
+    <div>
+      <div class="eyebrow" style="margin-bottom:4px;">Özel Rezervasyon</div>
+      <h2>Gecenin en iyi masası sizin olsun</h2>
+      <p style="margin:0; color:var(--muted); font-size:14px;">Loca, kurumsal grup ve özel kutlamalar için ekibimiz sizinle plan yapsın.</p>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:10px;">
+      <a href="tel:+903926504000" class="btn btn-primary">Bizi arayın ↗</a>
+      <a href="mailto:entertainment@merithotels.com" class="btn btn-ghost">E-posta gönderin</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="foot-wrap">
+    <div class="foot-grid">
+      <div class="foot-col">
+        <div style="margin-bottom:12px;"><b style="color:var(--gold-bright); letter-spacing:.18em; text-transform:uppercase;">Merit Entertainment</b></div>
+        <p style="margin:0; line-height:1.65;" data-i18n="foot_desc">Kuzey Kıbrıs'ın en prestijli gala salonlarında dünya standartlarında sahne prodüksiyonları ve unutulmaz konser geceleri.</p>
+      </div>
+      <div class="foot-col">
+        <h4 data-i18n="foot_explore">Keşfet</h4>
+        <ul>
+          <li><a href="merit-bilet.html" data-i18n="nav_home">Ana Sayfa</a></li>
+          <li><a href="yaklasan.html" data-i18n="nav_upcoming">Yaklaşan Etkinlikler</a></li>
+          <li><a href="takvim.html" data-i18n="nav_calendar">Etkinlik Takvimi</a></li>
+          <li><a href="biletim.html" data-i18n="nav_tickets">Biletim (PNR)</a></li>
+          <li><a href="kurumsal.html" data-i18n="nav_corp">Hakkımızda</a></li>
+          <li><a href="sss.html" data-i18n="nav_faq">Sık Sorulan Sorular</a></li>
+          <li><a href="iade.html" data-i18n="nav_refund">İade Koşulları</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4 data-i18n="foot_contact">İletişim</h4>
+        <ul><li>Merit Royal Diamond Hotel &amp; Spa</li><li>Alsancak, Girne / KKTC</li><li>+90 392 650 40 00</li><li>entertainment@merithotels.com</li></ul>
+      </div>
+      <div class="foot-col">
+        <h4 data-i18n="foot_social">Sosyal Medya</h4>
+        <ul>
+          <li><a href="https://www.instagram.com/merit.entertainment/" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px; margin-right:8px; color:var(--gold-bright);"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>@merit.entertainment</a></li>
+          <li><a href="https://www.facebook.com/meritentertainment/" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px; margin-right:8px; color:var(--gold-bright);"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>/meritentertainment</a></li>
+          <li><a href="https://www.merithotels.com/konserler" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px; margin-right:8px; color:var(--gold-bright);"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>merithotels.com/konserler</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom"><span data-i18n="foot_rights">© 2026 Merit Entertainment. Tüm hakları saklıdır.</span></div>
+  </div>
+</footer>
+<script type="module" src="./i18n.js"></script>
+</body>
+</html>

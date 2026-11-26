@@ -1,0 +1,10 @@
+# Ham indirilen kaynak klasörleri ve geçici dosyalar (canlı sitede kullanılmıyor)
+merit/
+merit-ig-2026/
+Yeni klasör (6)/
+aaa.html
+
+# Sistem / editör artıkları
+.DS_Store
+Thumbs.db
+*.log
