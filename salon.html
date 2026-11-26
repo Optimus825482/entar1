@@ -165,7 +165,7 @@
     <img src="assets/merit-entertainment-logo.svg" alt="Merit Entertainment" style="height:46px; width:auto; display:block;">
   </a>
   <div class="event-pill" id="topEventPill"></div>
-  <a href="takvim.html" class="btn btn-ghost" style="padding:8px 16px; font-size:12.5px;" data-i18n="salon_back">← Etkinlik Değiştir</a>
+  <a href="merit-bilet.html" class="btn btn-ghost" style="padding:8px 16px; font-size:12.5px;" data-i18n="salon_back">← Etkinlik Değiştir</a>
 </header>
 
 <main class="wrap">
@@ -207,6 +207,7 @@
           <span><i class="dot" style="background:var(--masa)"></i>Masa</span>
           <span><i class="dot" style="background:var(--loca)"></i>Loca</span>
           <span><i class="dot" style="background:var(--sold)"></i>Dolu</span>
+          <span><i class="dot" style="background:#3b82f6;box-shadow:0 0 8px rgba(59,130,246,.7)"></i>Seçili</span>
         </div>
         <span>Sürükle: Döndür · Tekerlek: Yakınlaştır</span>
       </div>
@@ -781,7 +782,7 @@ UNITS.forEach(u => {
 
     grp.add(base, wall, rail, tableBody, tableTop, numMesh);
     pickables.push(tableTop, tableBody, wall, base, rail);
-    unitMeshes.set(u.id, { mesh: tableTop, mat });
+    unitMeshes.set(u.id, { mesh: tableTop, mat, chairMatLoca });
   }
   scene.add(grp);
 });
@@ -796,7 +797,8 @@ function sync3DChairs() {
     if (!idxs) return;
     const isSel = selectedUnit && selectedUnit.id === u.id;
     idxs.forEach((idx, i) => {
-      if (isSel && i < guestCount) tmpCol.setHex(0xffffff);
+      if (isSel && i < guestCount) tmpCol.setHex(0x38bdf8);
+      else if (isSel && i < u.freeCount) tmpCol.setHex(0x2563eb);
       else tmpCol.setHex(i < u.freeCount ? u.zoneColor : 0x464b57);
       chairInstanced.setColorAt(idx, tmpCol);
     });
@@ -805,20 +807,42 @@ function sync3DChairs() {
 }
 
 const selRing = new THREE.Mesh(
-  new THREE.RingGeometry(1.08, 1.36, 32),
-  new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide })
+  new THREE.RingGeometry(1.22, 1.72, 36),
+  new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.92, side: THREE.DoubleSide })
 );
 selRing.rotation.x = -Math.PI / 2;
 scene.add(selRing);
+
+const selBodyGlow = new THREE.Mesh(
+  new THREE.CylinderGeometry(1.22, 1.24, 0.80, 24, 1, true),
+  new THREE.MeshBasicMaterial({ color: 0x3b82f6, transparent: true, opacity: 0.55, side: THREE.DoubleSide, depthWrite: false })
+);
+scene.add(selBodyGlow);
 
 function refreshAvailabilityColors() {
   UNITS.forEach(u => {
     const m = unitMeshes.get(u.id);
     const avail = !u.soldOut && u.freeCount >= guestCount;
+    const isSel = selectedUnit && selectedUnit.id === u.id;
     const filterMatch = activeFilter === 'all' || u.type === activeFilter;
-    m.mat.color.setHex(!avail ? 0x5c6170 : u.zoneColor);
-    m.mat.transparent = !filterMatch;
-    m.mat.opacity = filterMatch ? 1 : 0.14;
+
+    if (isSel) {
+      m.mat.color.setHex(0x3b82f6);
+      m.mat.emissive.setHex(0x1d4ed8);
+      m.mat.emissiveIntensity = 0.85;
+    } else {
+      m.mat.color.setHex(!avail ? 0x5c6170 : u.zoneColor);
+      m.mat.emissive.setHex(0x000000);
+      m.mat.emissiveIntensity = 0;
+    }
+    m.mat.transparent = !filterMatch && !isSel;
+    m.mat.opacity = (filterMatch || isSel) ? 1 : 0.14;
+
+    if (m.chairMatLoca) {
+      m.chairMatLoca.color.setHex(isSel ? 0x3b82f6 : (avail ? 0xc99a3a : 0x464b57));
+      m.chairMatLoca.emissive.setHex(isSel ? 0x1d4ed8 : 0x000000);
+      m.chairMatLoca.emissiveIntensity = isSel ? 0.6 : 0;
+    }
   });
 }
 
@@ -902,20 +926,24 @@ function updatePreviewImage() {
 
 function selectUnit(u) {
   selectedUnit = u;
-  selRing.position.set(u.x, u.y + (u.type === 'loca' ? 0.96 : 0.08), u.z + (u.type === 'loca' ? -0.55 : 0));
-  selRing.scale.setScalar(u.type === 'loca' ? 1.35 : 1);
+  const isLoca = u.type === 'loca';
+  selRing.position.set(u.x, u.y + (isLoca ? 0.96 : 0.08), u.z + (isLoca ? -0.55 : 0));
+  selRing.scale.setScalar(isLoca ? 1.35 : 1);
+  selBodyGlow.position.set(u.x, u.y + (isLoca ? 0.50 : 0.40), u.z + (isLoca ? -0.55 : 0));
+  selBodyGlow.scale.set(isLoca ? 0.90 : 1, 1, isLoca ? 0.90 : 1);
 
   document.getElementById('insTitle').textContent = u.label;
-  document.getElementById('insSub').textContent = u.type === 'loca' ? 'Yükseltilmiş Balkon · 12 Kişilik' : `${u.freeCount} kişilik yer müsait`;
-  document.getElementById('insType').textContent = u.type === 'loca' ? 'Loca' : 'Masa';
+  document.getElementById('insSub').textContent = isLoca ? 'Yükseltilmiş Balkon · 12 Kişilik' : `${u.freeCount} kişilik yer müsait`;
+  document.getElementById('insType').textContent = isLoca ? 'Loca' : 'Masa';
   document.getElementById('insViewLabel').textContent = `${u.label} — Sahne Görünümü`;
   updatePreviewImage();
 
-  const total = u.type === 'loca' ? u.price : u.price * guestCount;
-  document.getElementById('sumPick').textContent = u.type === 'loca' ? `${u.label} (Tam Loca)` : `${u.label} · ${guestCount} Kişi`;
-  document.getElementById('sumUnit').textContent = u.type === 'loca' ? `₺${u.price.toLocaleString('tr-TR')} (Loca)` : `₺${u.price.toLocaleString('tr-TR')}`;
+  const total = isLoca ? u.price : u.price * guestCount;
+  document.getElementById('sumPick').textContent = isLoca ? `${u.label} (Tam Loca)` : `${u.label} · ${guestCount} Kişi`;
+  document.getElementById('sumUnit').textContent = isLoca ? `₺${u.price.toLocaleString('tr-TR')} (Loca)` : `₺${u.price.toLocaleString('tr-TR')}`;
   document.getElementById('sumTotal').textContent = `₺${total.toLocaleString('tr-TR')}`;
   document.getElementById('btnCheckout').disabled = false;
+  refreshAvailabilityColors();
   sync3DChairs();
 }
 
@@ -1047,6 +1075,9 @@ function animate(now) {
   if (camAnim) camAnim(now);
   const t = now * 0.0006;
   spotBeams.forEach(b => { b.mesh.rotation.z = Math.sin(t + b.phase) * 0.22; });
+  const pulse = 1 + Math.sin(now * 0.005) * 0.07;
+  const baseScale = selectedUnit && selectedUnit.type === 'loca' ? 1.35 : 1;
+  selRing.scale.setScalar(baseScale * pulse);
   controls.update();
   renderer.render(scene, camera);
 }
